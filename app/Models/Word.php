@@ -28,15 +28,4 @@ class Word extends Model
     {
       return $this->belongsTo(Language::class);
     }
-
-
-    // protected static function boot()
-    // {
-    //     parent::boot();
-
-    //     // auto-sets values on creation
-    //     static::creating(function ($query) {
-    //         $query->user_id= Auth::user()->id;
-    //     });
-    // }
 }
