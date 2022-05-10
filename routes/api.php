@@ -17,7 +17,7 @@ use App\Http\Controllers\API\WordController;
 
 Route::post('register', [RegisterController::class, 'register']);
 Route::post('login', [RegisterController::class, 'login']);
-Route::get('/test', function () {
+Route::get('test', function () {
     return 'Hello World';
 });
      
