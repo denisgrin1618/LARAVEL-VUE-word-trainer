@@ -1,6 +1,19 @@
 <template>
 <v-app>
-    <v-app-bar app color="#F5F7F6" dark>
+    <v-app-bar app color="#F5F7F6" dark v-if="mobile">
+
+        <v-app-bar-nav-icon @click="drawer = true" color="black"></v-app-bar-nav-icon>
+
+        <v-spacer></v-spacer>
+        <div class="d-flex align-center">
+            <router-link to="/">
+                <v-img :src="'/images/logo.svg'" alt="Vuetify Logo" class="shrink mr-2" contain transition="scale-transition" height="40" width="100" to="/" />
+            </router-link> |
+        </div>
+
+    </v-app-bar>
+    <v-app-bar app color="#F5F7F6" dark v-if="!mobile">
+
         <div class="d-flex align-center">
             <router-link to="/">
                 <v-img :src="'/images/logo.svg'" alt="Vuetify Logo" class="shrink mr-2" contain transition="scale-transition" height="40" width="100" to="/" />
@@ -19,12 +32,46 @@
             <v-icon>mdi-fingerprint</v-icon>
         </v-btn>
 
-        <v-btn text color="black" to="/about">
+        <v-btn text color="black" to="/">
             <span class="mr-2">Logout</span>
             <v-icon>mdi-logout</v-icon>
         </v-btn>
 
     </v-app-bar>
+
+    <v-navigation-drawer v-model="drawer" absolute temporary>
+        <v-list nav dense>
+            <v-list-item-group active-class="deep-purple--text text--accent-4">
+                <v-list-item to="/">
+                    <v-list-item-icon>
+                        <v-icon>mdi-home</v-icon>
+                    </v-list-item-icon>
+                    <v-list-item-title>Home</v-list-item-title>
+                </v-list-item>
+
+                <v-list-item to="/signin">
+                    <v-list-item-icon>
+                        <v-icon>mdi-lock-open</v-icon>
+                    </v-list-item-icon>
+                    <v-list-item-title>Sign in</v-list-item-title>
+                </v-list-item>
+
+                <v-list-item to="/signup">
+                    <v-list-item-icon>
+                        <v-icon>mdi-fingerprint</v-icon>
+                    </v-list-item-icon>
+                    <v-list-item-title>Sign up</v-list-item-title>
+                </v-list-item>
+
+                <v-list-item to="/">
+                    <v-list-item-icon>
+                        <v-icon>mdi-logout</v-icon>
+                    </v-list-item-icon>
+                    <v-list-item-title>Logout</v-list-item-title>
+                </v-list-item>
+            </v-list-item-group>
+        </v-list>
+    </v-navigation-drawer>
 
     <v-main>
         <!-- <HelloWorld/> -->
@@ -52,9 +99,36 @@ export default {
     //   HelloWorld,
     // },
 
-    data: () => ({
-        //
-    }),
+    data() {
+        return {
+            drawer: false,
+            mobile: false
+        }
+    },
+    // computed: {
+    //     mobile() {
+    //         return this.$vuetify.breakpoint.sm
+    //     },
+    // }
+
+
+
+    methods: {
+        detectScreenChange() {
+            this.mobile = window.innerWidth < 560;
+        }
+    },
+    mounted() {
+        this.$nextTick(() => {
+            window.addEventListener('resize', this.detectScreenChange)
+        })
+    },
+    created() {
+        this.detectScreenChange(); // when instance is created
+    }
+
+
+
 };
 </script>
 
