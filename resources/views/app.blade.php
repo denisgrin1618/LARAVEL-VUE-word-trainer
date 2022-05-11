@@ -6,6 +6,7 @@
         <meta name="csrf-token" value="{{ csrf_token() }}"/>
         <title>Word trainer</title>
         <link href="https://fonts.googleapis.com/css?family=Nunito:200,600" rel="stylesheet" type="text/css">
+        <link href="https://cdn.jsdelivr.net/npm/@mdi/font@5.x/css/materialdesignicons.min.css" rel="stylesheet">
         <link href="{{ mix('css/app.css') }}" type="text/css" rel="stylesheet"/>
         <style>
             .bg-light {
