@@ -12,7 +12,7 @@
 
       <v-col class="mb-4">
         <h1 class="display-2 font-weight-bold mb-3">
-          HOME 
+          HOME {{ this.user.name }}
         </h1>
       </v-col>
 
@@ -22,8 +22,17 @@
 </template>
 
 <script>
+import { mapState } from 'pinia'
+import { useUserStore } from "../store/user";
 
 export default {
-  name: 'HomeView'
+  name: 'HomeView',
+
+  computed: {
+      ...mapState(useUserStore, ['user'])
+  },
+
+
+
 }
 </script>

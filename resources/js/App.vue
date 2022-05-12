@@ -16,23 +16,25 @@
 
         <div class="d-flex align-center">
             <router-link to="/">
-                <v-img :src="'/images/logo.svg'" alt="Vuetify Logo" class="shrink mr-2" contain transition="scale-transition" height="40" width="100" to="/" />
+                <v-img :src="'/images/logo.svg'" alt="Logo" class="shrink mr-2" contain transition="scale-transition" height="40" width="100" to="/" />
             </router-link> |
         </div>
 
         <v-spacer></v-spacer>
 
-        <v-btn text color="black" to="/signin">
+        <v-btn text color="black" to="/signin" v-if="!this.isAuthenticated">
             <span class="mr-2">Sign in</span>
             <v-icon>mdi-lock-open</v-icon>
         </v-btn>
 
-        <v-btn text color="black" to="/signup">
+        <v-btn text color="black" to="/signup" v-if="!this.isAuthenticated">
             <span class="mr-2">Sign up</span>
             <v-icon>mdi-fingerprint</v-icon>
         </v-btn>
 
-        <v-btn text color="black" to="/">
+        <span class="mr-2 black--text"  v-if="this.isAuthenticated">{{this.user.name}}</span>
+
+        <v-btn text color="black" @click="logout" v-if="this.isAuthenticated">
             <span class="mr-2">Logout</span>
             <v-icon>mdi-logout</v-icon>
         </v-btn>
@@ -49,21 +51,21 @@
                     <v-list-item-title>Home</v-list-item-title>
                 </v-list-item>
 
-                <v-list-item to="/signin">
+                <v-list-item to="/signin" v-if="!this.isAuthenticated">
                     <v-list-item-icon>
                         <v-icon>mdi-lock-open</v-icon>
                     </v-list-item-icon>
                     <v-list-item-title>Sign in</v-list-item-title>
                 </v-list-item>
 
-                <v-list-item to="/signup">
+                <v-list-item to="/signup" v-if="!this.isAuthenticated">
                     <v-list-item-icon>
                         <v-icon>mdi-fingerprint</v-icon>
                     </v-list-item-icon>
                     <v-list-item-title>Sign up</v-list-item-title>
                 </v-list-item>
 
-                <v-list-item to="/">
+                <v-list-item @click="logout" v-if="this.isAuthenticated">
                     <v-list-item-icon>
                         <v-icon>mdi-logout</v-icon>
                     </v-list-item-icon>
@@ -80,24 +82,15 @@
     </v-main>
 </v-app>
 
-<!-- <div id="app">
-    <nav>
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </nav>
-    <router-view/>
-  </div> -->
 </template>
 
 <script>
 // import HelloWorld from './components/HelloWorld';
+import { mapState } from 'pinia'
+import { useUserStore } from "./store/user";
 
 export default {
     name: 'App',
-
-    // components: {
-    //   HelloWorld,
-    // },
 
     data() {
         return {
@@ -105,17 +98,24 @@ export default {
             mobile: false
         }
     },
-    // computed: {
-    //     mobile() {
-    //         return this.$vuetify.breakpoint.sm
-    //     },
-    // }
 
-
+    computed: {
+      ...mapState(useUserStore, ['user', 'isAuthenticated'])
+    },
+     
+    // components: {
+    //   HelloWorld,
+    // },
 
     methods: {
         detectScreenChange() {
             this.mobile = window.innerWidth < 560;
+        },
+        logout(){
+            this.isAuthenticated = false;
+            this.user.name = '';
+            this.user.token = '';
+            this.$router.push('/');
         }
     },
     mounted() {
@@ -126,8 +126,6 @@ export default {
     created() {
         this.detectScreenChange(); // when instance is created
     }
-
-
 
 };
 </script>
