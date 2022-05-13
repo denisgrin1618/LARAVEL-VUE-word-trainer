@@ -69,12 +69,7 @@ class WordController extends Controller
      */
     public function update(WordPostRequest $request, $id)
     {
-   
-        if($request->fails()){
-            return $this->sendError('Validation Error.', $request->errors());       
-        }
-   
-        $word = $this->wordRepository->update($id, $request->validate());
+        $word = $this->wordRepository->update($id, $request->validated());
    
         return $this->sendResponse(new WordResource($word), 'Word updated successfully.');   
     }
