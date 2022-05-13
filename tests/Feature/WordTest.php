@@ -10,7 +10,6 @@ use Illuminate\Foundation\Testing\WithFaker;
 use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 use Illuminate\Http\Response;
-use Tests\CreatesApplication;
 
 class WordTest extends TestCase
 {

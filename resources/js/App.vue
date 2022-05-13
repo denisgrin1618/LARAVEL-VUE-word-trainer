@@ -20,9 +20,28 @@
             </router-link> |
         </div>
 
-        <v-spacer></v-spacer>
+        <v-tabs color="black" centered>
+            
+            <v-spacer></v-spacer> 
+            
+            <v-tab class="black--text" to="/words" >Words</v-tab>
+            <v-tab class="black--text">Tab 2</v-tab>
+            <v-tab class="black--text">Tab 3</v-tab>
+            <v-tab class="black--text">Tab 4</v-tab>
+            
+            <v-spacer></v-spacer> 
 
-        <v-btn text color="black" to="/signin" v-if="!this.isAuthenticated">
+            <v-tab class="black--text" to="/signin" v-if="!this.isAuthenticated">
+                <span class="mr-2">Sign in</span>
+                <v-icon color="black">mdi-lock-open</v-icon>
+            </v-tab>
+            <v-tab class="black--text" to="/signup" v-if="!this.isAuthenticated">
+                <span class="mr-2">Sign up</span>
+                <v-icon color="black">mdi-fingerprint</v-icon>
+            </v-tab>
+        </v-tabs>
+
+        <!-- <v-btn text color="black" to="/signin" v-if="!this.isAuthenticated">
             <span class="mr-2">Sign in</span>
             <v-icon>mdi-lock-open</v-icon>
         </v-btn>
@@ -30,9 +49,9 @@
         <v-btn text color="black" to="/signup" v-if="!this.isAuthenticated">
             <span class="mr-2">Sign up</span>
             <v-icon>mdi-fingerprint</v-icon>
-        </v-btn>
+        </v-btn> -->
 
-        <span class="mr-2 black--text"  v-if="this.isAuthenticated">{{this.user.name}}</span>
+        <span class="mr-2 black--text" v-if="this.isAuthenticated">{{this.user.name}}</span>
 
         <v-btn text color="black" @click="logout" v-if="this.isAuthenticated">
             <span class="mr-2">Logout</span>
@@ -81,13 +100,16 @@
         <router-view />
     </v-main>
 </v-app>
-
 </template>
 
 <script>
 // import HelloWorld from './components/HelloWorld';
-import { mapState } from 'pinia'
-import { useUserStore } from "./store/user";
+import {
+    mapState
+} from 'pinia'
+import {
+    useUserStore
+} from "./store/user";
 
 export default {
     name: 'App',
@@ -100,9 +122,9 @@ export default {
     },
 
     computed: {
-      ...mapState(useUserStore, ['user', 'isAuthenticated'])
+        ...mapState(useUserStore, ['user', 'isAuthenticated'])
     },
-     
+
     // components: {
     //   HelloWorld,
     // },
@@ -111,7 +133,7 @@ export default {
         detectScreenChange() {
             this.mobile = window.innerWidth < 560;
         },
-        logout(){
+        logout() {
             this.isAuthenticated = false;
             this.user.name = '';
             this.user.token = '';
