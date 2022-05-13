@@ -4,9 +4,9 @@ namespace App\Http\Controllers\API;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller as Controller;
+use App\Http\Requests\WordPostRequest;
 use App\Http\Resources\WordResource;
 use App\Repositories\WordRepositoryInterface;
-use Illuminate\Support\Facades\Validator;
 
 class WordController extends Controller
 {
@@ -36,19 +36,9 @@ class WordController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(WordPostRequest $request)
     {
-        $input = $request->all();  
-        $validator = Validator::make($input, [
-            'name' => 'required',
-            'language_id' => 'required|exists:languages,id'
-        ]);
-   
-        if($validator->fails()){
-            return $this->sendError('Validation Error.', $validator->errors());       
-        }
-   
-        $word = $this->wordRepository->create($input);
+        $word = $this->wordRepository->create($request->validated());
    
         return $this->sendResponse(new WordResource($word), 'Word created successfully.');
     }
@@ -77,23 +67,16 @@ class WordController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(WordPostRequest $request, $id)
     {
-        $input = $request->all();
    
-        $validator = Validator::make($input, [
-            'name' => 'required',
-            'language_id' => 'required|exists:languages,id'
-        ]);
-   
-        if($validator->fails()){
-            return $this->sendError('Validation Error.', $validator->errors());       
+        if($request->fails()){
+            return $this->sendError('Validation Error.', $request->errors());       
         }
    
-        $word = $this->wordRepository->update($id, $input);
+        $word = $this->wordRepository->update($id, $request->validate());
    
-        return $this->sendResponse(new WordResource($word), 'Word updated successfully.');
-    
+        return $this->sendResponse(new WordResource($word), 'Word updated successfully.');   
     }
 
     /**
