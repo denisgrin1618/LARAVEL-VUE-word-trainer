@@ -2,9 +2,12 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
+use App\Filters\WordFilter;
+use Illuminate\Http\Request;
 
 class Word extends Model
 {
@@ -36,5 +39,10 @@ class Word extends Model
     public function scopeWhereCurrentUser($query)
     {
         return $query->where('user_id', Auth::user()->id);
+    }
+
+    public function scopeFilter(Builder $builder, Request $request)
+    {
+        return (new WordFilter($request))->filter($builder);
     }
 }

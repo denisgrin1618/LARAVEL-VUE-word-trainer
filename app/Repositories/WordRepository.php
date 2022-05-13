@@ -8,7 +8,9 @@ class WordRepository implements WordRepositoryInterface {
 
     public function all()
     {
-        return Word::whereCurrentUser()->get();      
+        return Word::whereCurrentUser()
+            ->filter(request())
+            ->get();      
     }
 
     public function findById($id){

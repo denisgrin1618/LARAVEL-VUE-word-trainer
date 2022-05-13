@@ -5,7 +5,6 @@ namespace App\Http\Controllers\API;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller as Controller;
 use App\Http\Resources\WordResource;
-use App\Models\Word;
 use App\Repositories\WordRepositoryInterface;
 use Illuminate\Support\Facades\Validator;
 
@@ -21,9 +20,10 @@ class WordController extends Controller
     /**
      * Display a listing of the resource.
      *
+     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
         $words = $this->wordRepository->all();
     
