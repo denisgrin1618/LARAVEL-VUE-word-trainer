@@ -28,4 +28,13 @@ class Word extends Model
     {
       return $this->belongsTo(Language::class);
     }
+
+    /**
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeWhereCurrentUser($query)
+    {
+        return $query->where('user_id', Auth::user()->id);
+    }
 }

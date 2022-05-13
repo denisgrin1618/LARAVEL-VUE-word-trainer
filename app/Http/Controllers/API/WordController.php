@@ -6,10 +6,18 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller as Controller;
 use App\Http\Resources\WordResource;
 use App\Models\Word;
+use App\Repositories\WordRepositoryInterface;
 use Illuminate\Support\Facades\Validator;
 
 class WordController extends Controller
 {
+
+    private $wordRepository;
+
+    public function __construct(WordRepositoryInterface $wordRepository) {
+        $this->wordRepository = $wordRepository;
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -17,10 +25,9 @@ class WordController extends Controller
      */
     public function index()
     {
-        $words = Word::all();
+        $words = $this->wordRepository->all();
     
-        return $this->sendResponse(WordResource::collection($words), 'Words retrieved successfully.');
-    
+        return $this->sendResponse(WordResource::collection($words), 'Words retrieved successfully.'); 
     }
 
     /**
@@ -31,8 +38,7 @@ class WordController extends Controller
      */
     public function store(Request $request)
     {
-        $input = $request->all();
-   
+        $input = $request->all();  
         $validator = Validator::make($input, [
             'name' => 'required',
             'language_id' => 'required|exists:languages,id'
@@ -42,10 +48,9 @@ class WordController extends Controller
             return $this->sendError('Validation Error.', $validator->errors());       
         }
    
-        $word = Word::create($input);
+        $word = $this->wordRepository->create($input);
    
         return $this->sendResponse(new WordResource($word), 'Word created successfully.');
-    
     }
 
     /**
@@ -54,14 +59,15 @@ class WordController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show(Word $word)
+    public function show($id)
     {
+        $word = $this->wordRepository->findById($id);
+
         if (is_null($word)) {
-            return $this->sendError('Product not found.');
+            return $this->sendError('Word not found.');
         }
    
         return $this->sendResponse(new WordResource($word), 'Word retrieved successfully.');
-   
     }
 
     /**
@@ -71,7 +77,7 @@ class WordController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Word $word)
+    public function update(Request $request, $id)
     {
         $input = $request->all();
    
@@ -84,7 +90,7 @@ class WordController extends Controller
             return $this->sendError('Validation Error.', $validator->errors());       
         }
    
-        $word->update($input);
+        $word = $this->wordRepository->update($id, $input);
    
         return $this->sendResponse(new WordResource($word), 'Word updated successfully.');
     
@@ -96,9 +102,9 @@ class WordController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy( Word $word)
+    public function destroy($id)
     {
-        $word->delete();
+        $this->wordRepository->destroy($id);
    
         return $this->sendResponse([], 'Word deleted successfully.');
     }

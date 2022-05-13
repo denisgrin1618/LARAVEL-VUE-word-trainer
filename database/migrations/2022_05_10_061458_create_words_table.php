@@ -15,9 +15,10 @@ class CreateWordsTable extends Migration
     {
         Schema::create('words', function (Blueprint $table) {
             $table->id();
-            $table->string('name')->unique();;                  
+            $table->string('name');                  
             $table->foreignId('language_id')->constrained('languages')->onDelete('cascade');
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->unique(['user_id', 'name']);
             $table->timestamps();
         });
     }
