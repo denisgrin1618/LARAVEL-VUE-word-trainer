@@ -17,14 +17,6 @@ use App\Http\Controllers\API\WordController;
 
 Route::post('register', [RegisterController::class, 'register']);
 Route::post('login', [RegisterController::class, 'login']);
-     
-Route::middleware('auth:sanctum')->group( function () {
-
-    Route::apiResources([
-        'words' => WordController::class,
-    ]);
-
-});
 
 Route::group(['prefix' => 'v1', 'as' => 'api.',  'middleware' => ['auth:sanctum']], function () {
     

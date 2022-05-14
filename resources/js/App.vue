@@ -1,5 +1,5 @@
 <template>
-<v-app>
+<v-app :style="{background: $vuetify.theme.themes[theme].background}">
     <v-app-bar app color="#F5F7F6" dark v-if="mobile">
 
         <v-app-bar-nav-icon @click="drawer = true" color="black"></v-app-bar-nav-icon>
@@ -122,7 +122,10 @@ export default {
     },
 
     computed: {
-        ...mapState(useUserStore, ['user', 'isAuthenticated'])
+        ...mapState(useUserStore, ['user', 'isAuthenticated']),
+        theme(){
+            return (this.$vuetify.theme.dark) ? 'dark' : 'light'
+        }
     },
 
     // components: {
