@@ -6,8 +6,16 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller as Controller;
 use App\Http\Requests\WordPostRequest;
 use App\Http\Resources\WordResource;
+use App\Models\Word;
 use App\Repositories\WordRepositoryInterface;
+use Illuminate\Http\Response;
 
+/**
+ * @OA\OpenApi(
+ *   security={ {"sanctum": {} }},
+ * )
+ * @OA\Tag(name="Words")
+ */
 class WordController extends Controller
 {
 
@@ -19,9 +27,9 @@ class WordController extends Controller
 
     /**
      * @OA\Get(
-     *   path="/api/words",
+     *   path="/v1/words",
      *   summary="list of words",
-     *   security={ {"sanctum": {} }},
+     *   tags={"Words"},
      *   @OA\Response(
      *     response=200,
      *     description="A list with words"
@@ -36,63 +44,131 @@ class WordController extends Controller
     {
         $words = $this->wordRepository->all();
     
-        return $this->sendResponse(WordResource::collection($words), 'Words retrieved successfully.'); 
+        return WordResource::collection($words); 
     }
 
     /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @OA\Post(
+     *      path="/v1/words",
+     *      operationId="storeWord",
+     *      summary="Store new word",
+     *      tags={"Words"},
+     *      description="Returns word data",
+     *      @OA\RequestBody(
+     *          required=true,
+     *          @OA\JsonContent(ref="#/components/schemas/WordPostRequest")
+     *      ),
+     *      @OA\Response(
+     *          response=201,
+     *          description="Successful operation",
+     *          @OA\JsonContent(ref="#/components/schemas/WordResource")
+     *       )
+     * )
      */
     public function store(WordPostRequest $request)
     {
         $word = $this->wordRepository->create($request->validated());
    
-        return $this->sendResponse(new WordResource($word), 'Word created successfully.');
+        return (new WordResource($word))
+            ->response()
+            ->setStatusCode(Response::HTTP_CREATED);
     }
 
     /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @OA\Get(
+     *      path="/v1/words/{id}",
+     *      operationId="getWordById",
+     *      tags={"Words"},
+     *      summary="Get word information",
+     *      description="Returns project word",
+     *      @OA\Parameter(
+     *          name="id",
+     *          description="Word id",
+     *          required=true,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="integer"
+     *          )
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *          @OA\JsonContent(ref="#/components/schemas/WordResource")
+     *       ),
+     *      @OA\Response(
+     *          response=400,
+     *          description="Bad Request"
+     *      )
+     * )
      */
-    public function show($id)
+    public function show(Word $word)
     {
-        $word = $this->wordRepository->findById($id);
-
-        if (is_null($word)) {
-            return $this->sendError('Word not found.');
-        }
-   
-        return $this->sendResponse(new WordResource($word), 'Word retrieved successfully.');
+        return new WordResource($word);
     }
 
     /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @OA\Put(
+     *      path="/v1/words/{id}",
+     *      operationId="updateWord",
+     *      tags={"Words"},
+     *      summary="Update existing word",
+     *      description="Returns updated word data",
+     *      @OA\Parameter(
+     *          name="id",
+     *          description="word id",
+     *          required=true,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="integer"
+     *          )
+     *      ),
+     *      @OA\RequestBody(
+     *          required=true,
+     *          @OA\JsonContent(ref="#/components/schemas/WordPostRequest")
+     *      ),
+     *      @OA\Response(
+     *          response=202,
+     *          description="Successful operation",
+     *          @OA\JsonContent(ref="#/components/schemas/WordResource")
+     *       )
+     * )
      */
     public function update(WordPostRequest $request, $id)
     {
         $word = $this->wordRepository->update($id, $request->validated());
    
-        return $this->sendResponse(new WordResource($word), 'Word updated successfully.');   
+        return (new WordResource($word))
+            ->response()
+            ->setStatusCode(Response::HTTP_ACCEPTED);
     }
 
     /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @OA\Delete(
+     *      path="/v1/words/{id}",
+     *      operationId="deleteWord",
+     *      tags={"Words"},
+     *      summary="Delete existing word",
+     *      description="Deletes a record and returns no content",
+     *      @OA\Parameter(
+     *          name="id",
+     *          description="Word id",
+     *          required=true,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="integer"
+     *          )
+     *      ),
+     *      @OA\Response(
+     *          response=204,
+     *          description="Successful operation",
+     *          @OA\JsonContent()
+     *       )
+     * )
      */
-    public function destroy($id)
+    public function destroy(Word $word)
     {
-        $this->wordRepository->destroy($id);
-   
-        return $this->sendResponse([], 'Word deleted successfully.');
+        $word->delete();
+
+        return response(null, Response::HTTP_NO_CONTENT);
     }
 }

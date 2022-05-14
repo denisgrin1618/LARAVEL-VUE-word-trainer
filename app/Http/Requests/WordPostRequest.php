@@ -6,6 +6,22 @@ use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
+/**
+ * @OA\Schema(
+ *      title="Store Word request",
+ *      description="Store Word request body data",
+ *      type="object",
+ *      required={"name","language_id"},
+ *      @OA\Property(
+ *          property="name",
+ *          example="A nice word"
+ *      ),
+ *      @OA\Property(
+ *          property="language_id",
+ *          example="1"
+ *      )
+ * )
+ */
 class WordPostRequest extends FormRequest
 {
     /**

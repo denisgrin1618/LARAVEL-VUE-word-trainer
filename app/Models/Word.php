@@ -10,20 +10,20 @@ use App\Filters\WordFilter;
 use Illuminate\Http\Request;
 
 /**
- * @SWG\Definition(
- *  definition="Word",
- *  @SWG\Property(
- *      property="id",
- *      type="integer"
- *  ),
- *  @SWG\Property(
+ * @OA\Schema(
+ *    title="Word",
+ *    description="Word model",
+ *    @OA\Xml(
+ *      name="Word"
+ *    ),
+ *    @OA\Property(
  *      property="name",
  *      type="string"
- *  ),
- *  @SWG\Property(
+ *    ),
+ *    @OA\Property(
  *      property="language_id",
  *      type="integer"
- *  )
+ *    )
  * )
  */
 class Word extends Model

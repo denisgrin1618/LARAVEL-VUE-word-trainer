@@ -1,14 +1,27 @@
 {
     "openapi": "3.0.0",
     "info": {
-        "title": "Word trainer API",
-        "version": "0.1"
+        "title": "Word trainer Documentation",
+        "description": "Word trainer Documentation",
+        "contact": {
+            "email": "denis.grin1618@gmail.com"
+        },
+        "version": "1.0.0"
     },
+    "servers": [
+        {
+            "url": "http://localhost/api",
+            "description": "API Server"
+        }
+    ],
     "paths": {
-        "/api/words": {
+        "/v1/words": {
             "get": {
+                "tags": [
+                    "Words"
+                ],
                 "summary": "list of words",
-                "operationId": "6d3b261fda6a294d3fcc13eb3bbf611f",
+                "operationId": "8451b3a53640f2ac48b59f05750047cd",
                 "responses": {
                     "200": {
                         "description": "A list with words"
@@ -16,16 +29,209 @@
                     "default": {
                         "description": "an \"unexpected\" error"
                     }
-                },
-                "security": [
-                    {
-                        "sanctum": []
+                }
+            },
+            "post": {
+                "tags": [
+                    "Words"
+                ],
+                "summary": "Store new word",
+                "description": "Returns word data",
+                "operationId": "storeWord",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/WordPostRequest"
+                            }
+                        }
                     }
-                ]
+                },
+                "responses": {
+                    "201": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/WordResource"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/words/{id}": {
+            "get": {
+                "tags": [
+                    "Words"
+                ],
+                "summary": "Get word information",
+                "description": "Returns project word",
+                "operationId": "getWordById",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Word id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/WordResource"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Words"
+                ],
+                "summary": "Update existing word",
+                "description": "Returns updated word data",
+                "operationId": "updateWord",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "word id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/WordPostRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "202": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/WordResource"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Words"
+                ],
+                "summary": "Delete existing word",
+                "description": "Deletes a record and returns no content",
+                "operationId": "deleteWord",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Word id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    }
+                }
             }
         }
     },
     "components": {
+        "schemas": {
+            "WordPostRequest": {
+                "title": "Store Word request",
+                "description": "Store Word request body data",
+                "required": [
+                    "name",
+                    "language_id"
+                ],
+                "properties": {
+                    "name": {
+                        "example": "A nice word"
+                    },
+                    "language_id": {
+                        "example": "1"
+                    }
+                },
+                "type": "object"
+            },
+            "WordResource": {
+                "title": "WordResource",
+                "description": "Word resource",
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "language_id": {
+                        "type": "integer"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date"
+                    }
+                },
+                "type": "object",
+                "xml": {
+                    "name": "WordResource"
+                }
+            },
+            "Word": {
+                "title": "Word",
+                "description": "Word model",
+                "properties": {
+                    "name": {
+                        "type": "string"
+                    },
+                    "language_id": {
+                        "type": "integer"
+                    }
+                },
+                "type": "object",
+                "xml": {
+                    "name": "Word"
+                }
+            }
+        },
         "securitySchemes": {
             "sanctum": {
                 "type": "apiKey",
@@ -34,5 +240,15 @@
                 "in": "header"
             }
         }
-    }
+    },
+    "security": [
+        {
+            "sanctum": []
+        }
+    ],
+    "tags": [
+        {
+            "name": "Words"
+        }
+    ]
 }

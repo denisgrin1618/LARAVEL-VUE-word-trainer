@@ -4,6 +4,36 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
+
+/**
+ * @OA\Schema(
+ *     title="WordResource",
+ *     description="Word resource",
+ *     @OA\Xml(
+ *         name="WordResource"
+ *     ),
+ *     @OA\Property(
+ *          property="id",
+ *          type="integer"
+ *     ),
+ *     @OA\Property(
+ *          property="name",
+ *          type="string"
+ *     ),
+ *     @OA\Property(
+ *          property="language_id",
+ *          type="integer"
+ *     ),
+ *     @OA\Property(
+ *          property="created_at",
+ *          type="date"
+ *     ),
+ *     @OA\Property(
+ *          property="updated_at",
+ *          type="date"
+ *     ),
+ * )
+ */
 class WordResource extends JsonResource
 {
     /**

@@ -25,3 +25,10 @@ Route::middleware('auth:sanctum')->group( function () {
     ]);
 
 });
+
+Route::group(['prefix' => 'v1', 'as' => 'api.',  'middleware' => ['auth:sanctum']], function () {
+    
+    Route::apiResources([
+        'words' => WordController::class,
+    ]);
+});
