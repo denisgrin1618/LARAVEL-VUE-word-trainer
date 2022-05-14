@@ -18,10 +18,19 @@ class WordController extends Controller
     }
 
     /**
-     * Display a listing of the resource.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @OA\Get(
+     *   path="/api/words",
+     *   summary="list of words",
+     *   security={ {"sanctum": {} }},
+     *   @OA\Response(
+     *     response=200,
+     *     description="A list with words"
+     *   ),
+     *   @OA\Response(
+     *     response="default",
+     *     description="an ""unexpected"" error"
+     *   )
+     * )
      */
     public function index(Request $request)
     {

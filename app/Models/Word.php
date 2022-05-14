@@ -9,6 +9,23 @@ use Illuminate\Support\Facades\Auth;
 use App\Filters\WordFilter;
 use Illuminate\Http\Request;
 
+/**
+ * @SWG\Definition(
+ *  definition="Word",
+ *  @SWG\Property(
+ *      property="id",
+ *      type="integer"
+ *  ),
+ *  @SWG\Property(
+ *      property="name",
+ *      type="string"
+ *  ),
+ *  @SWG\Property(
+ *      property="language_id",
+ *      type="integer"
+ *  )
+ * )
+ */
 class Word extends Model
 {
     use HasFactory;
