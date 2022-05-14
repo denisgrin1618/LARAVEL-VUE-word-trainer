@@ -24,10 +24,48 @@
       margin:0;
       background: #fafafa;
     }
+
+
+
+
+
+
+    #topnav {
+        width: 100%;
+        position: fixed;
+        top: 0;
+        left: 0;
+        background-color: rgb(105, 185, 119);
+        font-family: Arial, sans-serif;
+        font-size: 15px;
+    }
+    .wlogo {
+        display: inline-block;
+        width: 100px;
+        height: 60px;
+        color: White;
+        text-align: center;
+        line-height: 55px;
+        text-decoration: none;
+        margin: 0 0 0 10px;
+    }
+    .wtitle {
+        position: absolute;
+        color: White;
+        top: 0;
+        right: 0;
+        margin-right: 10px; 
+        text-shadow: 1px 1px 2px black;
+    }
     </style>
 </head>
 
 <body>
+    <nav id="topnav">
+        <img class="wlogo" src="/images/logo.svg" >
+        <h2 class="wtitle">Word trainer Documentation</h2>
+    </nav>
+
 <div id="swagger-ui"></div>
 
 <script src="{{ l5_swagger_asset($documentation, 'swagger-ui-bundle.js') }}"></script>
