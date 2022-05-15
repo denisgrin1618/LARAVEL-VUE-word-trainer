@@ -30,7 +30,7 @@ class TranslationRepository implements TranslationRepositoryInterface {
     {
         $translation->update($input);
 
-        return $translation->fresh() ;
+        return $translation->fresh();
     }
 
     public function destroy($translation){

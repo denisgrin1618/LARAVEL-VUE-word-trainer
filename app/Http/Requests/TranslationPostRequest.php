@@ -43,7 +43,7 @@ class TranslationPostRequest extends FormRequest
     {
         return [
             'word_origin_id' => 'required|exists:words,id',
-            'word_translation_id' => 'required|exists:words,id'
+            'word_translation_id' => 'required|exists:words,id|different:word_origin_id'
         ];
     }
 
