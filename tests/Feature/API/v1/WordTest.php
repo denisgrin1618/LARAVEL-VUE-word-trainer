@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature;
+namespace Tests\Feature\API\v1;
 
 use App\Models\Language;
 use App\Models\User;
@@ -22,7 +22,7 @@ class WordTest extends TestCase
             User::factory()->create()
         );
 
-        $response = $this->get('/api/words');
+        $response = $this->get('/api/v1/words');
 
         $response->assertStatus(Response::HTTP_OK);
     }
@@ -40,21 +40,9 @@ class WordTest extends TestCase
             'language_id'  => Language::where('name', 'en')->first()->id
         ];
 
-        $this->post('/api/words', $payload)
-        ->assertStatus(Response::HTTP_OK)
-        ->assertJsonStructure(
-             [
-                 'data' => [
-                     'id',
-                     'name',
-                     'language_id',
-                     'user_id',
-                     'created_at',
-                     'updated_at'
-                 ],
-                 'message'
-             ]
-         );
+        $this->post('/api/v1/words', $payload)
+        ->assertStatus(Response::HTTP_CREATED);
+
         $this->assertDatabaseHas('words', $payload);
     }
 
@@ -68,7 +56,7 @@ class WordTest extends TestCase
             'name' => $this->faker->firstName
         ];
 
-        $this->post('/api/words', $payload)
+        $this->post('/api/v1/words', $payload)
         ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
         
     }
@@ -93,8 +81,8 @@ class WordTest extends TestCase
             'language_id' => $language_id
         ];
 
-        $this->put("/api/words/{$word->id}", $payload)
-        ->assertStatus(Response::HTTP_OK);
+        $this->put("/api/v1/words/{$word->id}", $payload)
+        ->assertStatus(Response::HTTP_ACCEPTED);
 
         $this->assertDatabaseHas('words', $payload);      
     }
@@ -116,8 +104,8 @@ class WordTest extends TestCase
 
         $word = Word::create($payload);
 
-        $this->delete("/api/words/{$word->id}")
-        ->assertStatus(Response::HTTP_OK);
+        $this->delete("/api/v1/words/{$word->id}")
+        ->assertStatus(Response::HTTP_NO_CONTENT);
 
         $this->assertDatabaseMissing('words', $payload);      
     }
