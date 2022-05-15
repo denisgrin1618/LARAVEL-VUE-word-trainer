@@ -3001,27 +3001,23 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm.js");
+/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm.js");
 /* harmony import */ var _App_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./App.vue */ "./resources/js/App.vue");
 /* harmony import */ var _router__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./router */ "./resources/js/router/index.js");
 /* harmony import */ var _plugins_vuetify__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./plugins/vuetify */ "./resources/js/plugins/vuetify.js");
-/* harmony import */ var pinia__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! pinia */ "./node_modules/pinia/dist/pinia.esm-browser.js");
+/* harmony import */ var _plugins_pinia__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./plugins/pinia */ "./resources/js/plugins/pinia.js");
 __webpack_require__(/*! ./bootstrap */ "./resources/js/bootstrap.js");
 
 
- // import vuetify from './plugins/vuetify'
 
 
- // path to vuetify export
 
 
-vue__WEBPACK_IMPORTED_MODULE_3__["default"].config.productionTip = false;
-vue__WEBPACK_IMPORTED_MODULE_3__["default"].use(pinia__WEBPACK_IMPORTED_MODULE_4__.PiniaVuePlugin);
-var pinia = (0,pinia__WEBPACK_IMPORTED_MODULE_4__.createPinia)();
-new vue__WEBPACK_IMPORTED_MODULE_3__["default"]({
+vue__WEBPACK_IMPORTED_MODULE_4__["default"].config.productionTip = false;
+new vue__WEBPACK_IMPORTED_MODULE_4__["default"]({
   vuetify: _plugins_vuetify__WEBPACK_IMPORTED_MODULE_2__["default"],
   router: _router__WEBPACK_IMPORTED_MODULE_1__["default"],
-  pinia: pinia,
+  pinia: _plugins_pinia__WEBPACK_IMPORTED_MODULE_3__["default"],
   render: function render(h) {
     return h(_App_vue__WEBPACK_IMPORTED_MODULE_0__["default"]);
   }
@@ -3060,6 +3056,26 @@ window.axios.defaults.headers.common = {
 //     cluster: process.env.MIX_PUSHER_APP_CLUSTER,
 //     forceTLS: true
 // });
+
+/***/ }),
+
+/***/ "./resources/js/plugins/pinia.js":
+/*!***************************************!*\
+  !*** ./resources/js/plugins/pinia.js ***!
+  \***************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm.js");
+/* harmony import */ var pinia__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! pinia */ "./node_modules/pinia/dist/pinia.esm-browser.js");
+
+
+vue__WEBPACK_IMPORTED_MODULE_0__["default"].use(pinia__WEBPACK_IMPORTED_MODULE_1__.PiniaVuePlugin);
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ((0,pinia__WEBPACK_IMPORTED_MODULE_1__.createPinia)());
 
 /***/ }),
 
