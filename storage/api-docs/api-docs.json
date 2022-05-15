@@ -15,6 +15,159 @@
         }
     ],
     "paths": {
+        "/v1/translations": {
+            "get": {
+                "tags": [
+                    "Translations"
+                ],
+                "summary": "list of translations",
+                "operationId": "ddcbb4aa45d02542db52715cf2caab99",
+                "responses": {
+                    "200": {
+                        "description": "A list with translations"
+                    },
+                    "default": {
+                        "description": "an \"unexpected\" error"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Translations"
+                ],
+                "summary": "Store new translation",
+                "description": "Returns translation data",
+                "operationId": "storeTranslation",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/TranslationPostRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TranslationResource"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/translations/{id}": {
+            "get": {
+                "tags": [
+                    "Translations"
+                ],
+                "summary": "Get translation information",
+                "description": "Returns translation",
+                "operationId": "getTranslationById",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Translation id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TranslationResource"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Translations"
+                ],
+                "summary": "Update existing translation",
+                "description": "Returns updated translation data",
+                "operationId": "updateTranslation",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "translation id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/TranslationPostRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "202": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TranslationResource"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Translations"
+                ],
+                "summary": "Delete existing translation",
+                "description": "Deletes a record and returns no content",
+                "operationId": "deleteTranslation",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Translation id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/v1/words": {
             "get": {
                 "tags": [
@@ -171,6 +324,23 @@
     },
     "components": {
         "schemas": {
+            "TranslationPostRequest": {
+                "title": "Store Translation request",
+                "description": "Store Translation request body data",
+                "required": [
+                    "word_origin_id",
+                    "word_translation_id"
+                ],
+                "properties": {
+                    "word_origin_id": {
+                        "example": "1"
+                    },
+                    "word_translation_id": {
+                        "example": "1"
+                    }
+                },
+                "type": "object"
+            },
             "WordPostRequest": {
                 "title": "Store Word request",
                 "description": "Store Word request body data",
@@ -187,6 +357,25 @@
                     }
                 },
                 "type": "object"
+            },
+            "TranslationResource": {
+                "title": "TranslationResource",
+                "description": "Translation resource",
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "word_origin": {
+                        "$ref": "#/components/schemas/WordResource"
+                    },
+                    "word_translation": {
+                        "$ref": "#/components/schemas/WordResource"
+                    }
+                },
+                "type": "object",
+                "xml": {
+                    "name": "TranslationResource"
+                }
             },
             "WordResource": {
                 "title": "WordResource",
@@ -247,6 +436,9 @@
         }
     ],
     "tags": [
+        {
+            "name": "Translations"
+        },
         {
             "name": "Words"
         }

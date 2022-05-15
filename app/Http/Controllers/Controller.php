@@ -20,6 +20,9 @@ use Illuminate\Routing\Controller as BaseController;
  *      url=L5_SWAGGER_CONST_HOST,
  *      description="API Server"
  * )
+ * @OA\OpenApi(
+ *      security={ {"sanctum": {} }},
+ * )
  *
 */
 class Controller extends BaseController

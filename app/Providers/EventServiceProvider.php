@@ -2,7 +2,9 @@
 
 namespace App\Providers;
 
+use App\Models\Translation;
 use App\Models\Word;
+use App\Observers\TranslationObserver;
 use App\Observers\WordObserver;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
@@ -30,5 +32,6 @@ class EventServiceProvider extends ServiceProvider
     public function boot()
     {
         Word::observe(WordObserver::class);
+        Translation::observe(TranslationObserver::class);
     }
 }

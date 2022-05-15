@@ -17,7 +17,7 @@ export PATH="$HOME/.config/composer/vendor/bin:$PATH"
 - Run `sail composer install`
 - Run `sail artisan key:generate`
 - Run `sail artisan migrate --seed` (it has some seeded data for your testing)
-- Regenerate documentation with `php artisan l5-swagger:generate` command
+- Regenerate documentation with `sail artisan l5-swagger:generate` command
 - Regenerate front with `npm i && npm run watch` command
 
 ## AWS Beanstalk ssh

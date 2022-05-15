@@ -11,9 +11,6 @@ use App\Repositories\WordRepositoryInterface;
 use Illuminate\Http\Response;
 
 /**
- * @OA\OpenApi(
- *   security={ {"sanctum": {} }},
- * )
  * @OA\Tag(name="Words")
  */
 class WordController extends Controller

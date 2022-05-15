@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\RegisterController;
+use App\Http\Controllers\API\TranslationController;
 use App\Http\Controllers\API\WordController;
 
 /*
@@ -22,5 +23,6 @@ Route::group(['prefix' => 'v1', 'as' => 'api.',  'middleware' => ['auth:sanctum'
     
     Route::apiResources([
         'words' => WordController::class,
+        'translations' => TranslationController::class
     ]);
 });
