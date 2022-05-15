@@ -45,16 +45,15 @@ export default {
       formSubmit(e) {
         e.preventDefault();
 
-        let that =this;
         axios.post('/api/login', {
           email: this.email,
           password: this.password
         })
-        .then(function (response) {
-            that.user.token = response.data.data.token;
-            that.user.name = response.data.data.name;
-            that.isAuthenticated = true;
-            that.$router.push('/') 
+        .then((response) => {
+            this.user.token = response.data.data.token;
+            this.user.name = response.data.data.name;
+            this.isAuthenticated = true;
+            this.$router.push('/') 
         })
         .catch(function (error) {
             console.log(error);

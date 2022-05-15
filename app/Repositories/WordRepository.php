@@ -22,7 +22,11 @@ class WordRepository implements WordRepositoryInterface {
 
     public function create($input)
     {
-        return Word::create($input);
+        $word = Word::whereCurrentUser()
+            ->where('name', 'like', "%{$input['name']}%")
+            ->first();
+
+        return $word ?? Word::create($input);
     }
 
     public function update($wordId, $input)

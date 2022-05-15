@@ -2,16 +2,16 @@ require('./bootstrap');
 
 import Vue from 'vue'
 import App from './App.vue'
-import router from './router'
 import vuetify from './plugins/vuetify' 
 import pinia from './plugins/pinia'
+import router from './router'
 
 Vue.config.productionTip = false
 
 new Vue({
   vuetify,
-  router,
   pinia,
+  router,
   render: h => h(App)
 }).$mount('#app')
 

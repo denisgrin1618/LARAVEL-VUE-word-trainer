@@ -1,6 +1,7 @@
 <template>
 <v-container>
-    <v-data-table :headers="headers" :items="words" sort-by="calories" class="elevation-1" :items-per-page="5">
+
+    <v-data-table :headers="headers" :items="words" :languages="languages" sort-by="calories" class="elevation-1" :items-per-page="5">
         <template v-slot:top>
             <v-toolbar flat>
                 <!-- <v-toolbar-title>My CRUD</v-toolbar-title> -->
@@ -21,17 +22,19 @@
                             <v-container>
                                 <v-row>
                                     <v-col cols="12" sm="6" md="6">
-                                        <v-text-field v-model="editedItem.word1" label="Word1"></v-text-field>
+                                        <v-text-field v-model="editedItem.word_origin.name" label="Word1"></v-text-field>
                                     </v-col>
                                     <v-col cols="12" sm="6" md="6">
-                                        <v-text-field v-model="editedItem.lang1" label="Lang1"></v-text-field>
+                                        <v-select v-model="editedItem.word_origin.language.name" :items="languages" item-text="name"></v-select>
+                                        <!-- <v-text-field v-model="editedItem.word_origin.language.name" label="Lang1"></v-text-field> -->
                                     </v-col>
-                                     
+
                                     <v-col cols="12" sm="6" md="6">
-                                        <v-text-field v-model="editedItem.word2" label="Word2"></v-text-field>
+                                        <v-text-field v-model="editedItem.word_translation.name" label="Word2"></v-text-field>
                                     </v-col>
                                     <v-col cols="12" sm="6" md="6">
-                                        <v-text-field v-model="editedItem.lang2" label="Lang2"></v-text-field>
+                                        <v-select v-model="editedItem.word_translation.language.name" :items="languages" item-text="name"></v-select> 
+                                        <!-- <v-text-field v-model="editedItem.word_translation.language.name" label="Lang2"></v-text-field> -->
                                     </v-col>
                                 </v-row>
                             </v-container>
@@ -88,19 +91,19 @@ export default {
                 text: 'Word1',
                 align: 'start',
                 sortable: false,
-                value: 'word1',
+                value: 'word_origin.name',
             },
             {
                 text: 'Lang1',
-                value: 'lang1'
+                value: 'word_origin.language.name'
             },
             {
                 text: 'Word2',
-                value: 'word2'
+                value: 'word_translation.name'
             },
             {
                 text: 'Lang2',
-                value: 'lang2'
+                value: 'word_translation.language.name'
             },
             {
                 text: 'Actions',
@@ -111,17 +114,44 @@ export default {
         words: [],
         editedIndex: -1,
         editedItem: {
-            word1: '',
-            lang1: '',
-            word2: '',
-            lang2: '',
+            id: 0,
+            word_origin: {
+                id: 0,
+                name: "",
+                language: {
+                    id: 0,
+                    name: ""
+                }
+            },
+            word_translation: {
+                id: 0,
+                name: "",
+                language: {
+                    id: 0,
+                    name: ""
+                }
+            }
         },
         defaultItem: {
-            word1: '',
-            lang1: '',
-            word2: '',
-            lang2: '',
+            id: 0,
+            word_origin: {
+                id: 0,
+                name: "",
+                language: {
+                    id: 0,
+                    name: ""
+                }
+            },
+            word_translation: {
+                id: 0,
+                name: "",
+                language: {
+                    id: 0,
+                    name: ""
+                }
+            }
         },
+        languages: []
     }),
 
     computed: {
@@ -144,105 +174,80 @@ export default {
     },
 
     methods: {
+
+        editTranslation($t) {
+            axios.post(`/api/v1/translations`, {
+                    word_origin_id: $t.word_origin.id,
+                    word_translation_id: $t.word_translation.id,
+                })
+                .then((response) => {
+                    $t = response.data.data;
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
+        },
+        editTranslation($t) {
+            // axios.put(`/api/v1/translations/${$t.id}`, {
+            //     word_origin_id: $t.word_origin.id,
+            //     word_translation_id: $t.word_translation.id,
+            // })
+            // .then((response) => {
+            //     console.log(response);
+            // })
+            // .catch(function (error) {
+            //     console.log(error);
+            // });
+
+            axios.put(`/api/v1/words/${$t.word_origin.id}`, {
+                    name: $t.word_origin.name,
+                    language_id: $t.word_origin.language.id,
+                })
+                .then((response) => {
+                    $t.word_origin = response.data.data;
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
+
+            axios.put(`/api/v1/words/${$t.word_translation.id}`, {
+                    name: $t.word_translation.name,
+                    language_id: $t.word_translation.language.id,
+                })
+                .then((response) => {
+                    $t.word_translation = response.data.data;
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
+        },
         initialize() {
-            this.words = [{
-                    word1: 'Frozen Yogurt',
-                    lang1: 'en',
-                    word2: 'слово',
-                    lang2: 'ru',
-                },
-                {
-                    word1: 'Ice cream sandwich',
-                    lang1: 'en',
-                    word2: 'фыва',
-                    lang2: 'ru',
-                },
-                {
-                    word1: 'Ice cream sandwich',
-                    lang1: 'en',
-                    word2: 'фыва',
-                    lang2: 'ru',
-                },
-                {
-                    word1: 'Ice cream sandwich',
-                    lang1: 'en',
-                    word2: 'фыва',
-                    lang2: 'ru',
-                },
-                {
-                    word1: 'Ice cream sandwich',
-                    lang1: 'en',
-                    word2: 'фыва',
-                    lang2: 'ru',
-                },
-                {
-                    word1: 'Ice cream sandwich',
-                    lang1: 'en',
-                    word2: 'фыва',
-                    lang2: 'ru',
-                },
-                {
-                    word1: 'Ice cream sandwich',
-                    lang1: 'en',
-                    word2: 'фыва',
-                    lang2: 'ru',
-                },
-                {
-                    word1: 'Ice cream sandwich',
-                    lang1: 'en',
-                    word2: 'фыва',
-                    lang2: 'ru',
-                },
-                {
-                    word1: 'Ice cream sandwich',
-                    lang1: 'en',
-                    word2: 'фыва',
-                    lang2: 'ru',
-                },
-                {
-                    word1: 'Ice cream sandwich',
-                    lang1: 'en',
-                    word2: 'фыва',
-                    lang2: 'ru',
-                },
-                {
-                    word1: 'Ice cream sandwich',
-                    lang1: 'en',
-                    word2: 'фыва',
-                    lang2: 'ru',
-                },
-                {
-                    word1: 'Ice cream sandwich',
-                    lang1: 'en',
-                    word2: 'фыва',
-                    lang2: 'ru',
-                },
-                {
-                    word1: 'Ice cream sandwich',
-                    lang1: 'en',
-                    word2: 'фыва',
-                    lang2: 'ru',
-                },
-                {
-                    word1: 'Ice cream sandwich',
-                    lang1: 'en',
-                    word2: 'фыва',
-                    lang2: 'ru',
-                },
-                {
-                    word1: 'Ice cream sandwich',
-                    lang1: 'en',
-                    word2: 'фыва',
-                    lang2: 'ru',
-                },
-                
-            ]
+
+            axios.get('/api/v1/translations')
+                .then((response) => {
+                    console.log(response);
+                    this.words = response.data.data
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
+
+            axios.get('/api/v1/languages')
+                .then((response) => {
+                    console.log(response);
+                    this.languages = response.data.data
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
+
         },
 
         editItem(item) {
             this.editedIndex = this.words.indexOf(item)
             this.editedItem = Object.assign({}, item)
             this.dialog = true
+            console.log(item);
         },
 
         deleteItem(item) {
@@ -278,6 +283,7 @@ export default {
             } else {
                 this.words.push(this.editedItem)
             }
+            this.editTranslation(this.editedItem)
             this.close()
         },
     },

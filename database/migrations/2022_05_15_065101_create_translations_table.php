@@ -18,7 +18,8 @@ class CreateTranslationsTable extends Migration
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->foreignId('word_origin_id')->constrained('words')->onDelete('cascade');
             $table->foreignId('word_translation_id')->constrained('words')->onDelete('cascade');           
-            $table->unique(['word_origin_id', 'word_translation_id']);
+            $table->unique('word_origin_id');
+            $table->unique('word_translation_id');
             $table->timestamps();
         });
     }

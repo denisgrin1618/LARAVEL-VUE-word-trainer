@@ -4,6 +4,7 @@ import HomeView from '../views/HomeView.vue'
 import SignInView from '../views/SignInView.vue'
 import SignUpView from '../views/SignUpView.vue'
 import WordsView from '../views/WordsView.vue'
+import { useUserStore } from "../store/user";
 
 Vue.use(VueRouter)
 
@@ -42,6 +43,20 @@ const router = new VueRouter({
   mode: 'history',
   base: process.env.BASE_URL,
   routes
+})
+
+router.beforeEach((to, from, next) => {
+
+  const userStore = useUserStore()
+
+  if (userStore.isAuthenticated || to.name === 'signin') {
+    axios.defaults.headers.common['Authorization'] = `Bearer ${userStore.user.token}`;
+    next();
+  } else {
+    axios.defaults.headers.common['Authorization'] = null;
+    next('/signin');
+  }
+  
 })
 
 export default router

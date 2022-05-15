@@ -21,9 +21,9 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *          type="string"
  *     ),
  *     @OA\Property(
- *          property="language_id",
- *          type="integer"
- *     ),
+ *          property="language",
+ *          ref="#/components/schemas/LanguageResource"
+ *     )
  *     @OA\Property(
  *          property="created_at",
  *          type="date"
@@ -47,7 +47,7 @@ class WordResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
-            'language_id' => $this->language_id,
+            'language' => new LanguageResource($this->language),
             'user_id' => $this->user_id,
             'created_at' => $this->created_at->format('d/m/Y'),
             'updated_at' => $this->updated_at->format('d/m/Y'),

@@ -21,15 +21,15 @@
         </div>
 
         <v-tabs color="black" centered>
-            
-            <v-spacer></v-spacer> 
-            
-            <v-tab class="black--text" to="/words" >Words</v-tab>
+
+            <v-spacer></v-spacer>
+
+            <v-tab class="black--text" to="/words">Words</v-tab>
             <v-tab class="black--text">Tab 2</v-tab>
             <v-tab class="black--text">Tab 3</v-tab>
             <v-tab class="black--text">Tab 4</v-tab>
-            
-            <v-spacer></v-spacer> 
+
+            <v-spacer></v-spacer>
 
             <v-tab class="black--text" to="/signin" v-if="!this.isAuthenticated">
                 <span class="mr-2">Sign in</span>
@@ -95,43 +95,35 @@
     </v-navigation-drawer>
 
     <v-main>
-        <!-- <HelloWorld/> -->
-
+        <!-- <Alert message="sdfsdf" type="error"></Alert> -->
         <router-view />
     </v-main>
 </v-app>
 </template>
 
 <script>
-// import HelloWorld from './components/HelloWorld';
-import {
-    mapState
-} from 'pinia'
-import {
-    useUserStore
-} from "./store/user";
+import Alert from './components/Alert.vue'
+import { mapWritableState } from 'pinia'
+import { useUserStore } from "./store/user";
 
 export default {
     name: 'App',
 
+    components: {
+        Alert
+    },
     data() {
         return {
             drawer: false,
             mobile: false
         }
     },
-
     computed: {
-        ...mapState(useUserStore, ['user', 'isAuthenticated']),
-        theme(){
+        ...mapWritableState(useUserStore, ['user', 'isAuthenticated']),
+        theme() {
             return (this.$vuetify.theme.dark) ? 'dark' : 'light'
         }
     },
-
-    // components: {
-    //   HelloWorld,
-    // },
-
     methods: {
         detectScreenChange() {
             this.mobile = window.innerWidth < 560;
@@ -140,7 +132,7 @@ export default {
             this.isAuthenticated = false;
             this.user.name = '';
             this.user.token = '';
-            this.$router.push('/');
+            this.$router.push('/signin');
         }
     },
     mounted() {
