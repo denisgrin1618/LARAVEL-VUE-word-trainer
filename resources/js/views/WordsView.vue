@@ -173,6 +173,9 @@ export default {
 
     methods: {
 
+        deleteTranslation(item){
+          axios.delete('/api/v1/translations/'+item.id)
+        },
         saveTranslation(item) {
             let requestOne = axios({
                 method: item.word_origin.id > 0 ? 'put' : 'post',
@@ -244,7 +247,6 @@ export default {
 
             axios.get('/api/v1/translations')
                 .then((response) => {
-                    console.log(response);
                     this.words = response.data.data
                 })
                 .catch(function (error) {
@@ -253,7 +255,6 @@ export default {
 
             axios.get('/api/v1/languages')
                 .then((response) => {
-                    console.log(response);
                     this.languages = response.data.data
                 })
                 .catch(function (error) {
@@ -276,6 +277,7 @@ export default {
         },
 
         deleteItemConfirm() {
+            this.deleteTranslation(this.editedItem)
             this.words.splice(this.editedIndex, 1)
             this.closeDelete()
         },

@@ -2925,6 +2925,9 @@ __webpack_require__.r(__webpack_exports__);
     this.initialize();
   },
   methods: {
+    deleteTranslation: function deleteTranslation(item) {
+      axios["delete"]('/api/v1/translations/' + item.id);
+    },
     saveTranslation: function saveTranslation(item) {
       var _this = this;
 
@@ -2995,13 +2998,11 @@ __webpack_require__.r(__webpack_exports__);
       var _this2 = this;
 
       axios.get('/api/v1/translations').then(function (response) {
-        console.log(response);
         _this2.words = response.data.data;
       })["catch"](function (error) {
         console.log(error);
       });
       axios.get('/api/v1/languages').then(function (response) {
-        console.log(response);
         _this2.languages = response.data.data;
       })["catch"](function (error) {
         console.log(error);
@@ -3019,6 +3020,7 @@ __webpack_require__.r(__webpack_exports__);
       this.dialogDelete = true;
     },
     deleteItemConfirm: function deleteItemConfirm() {
+      this.deleteTranslation(this.editedItem);
       this.words.splice(this.editedIndex, 1);
       this.closeDelete();
     },
