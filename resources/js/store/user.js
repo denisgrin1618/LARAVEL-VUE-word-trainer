@@ -14,8 +14,6 @@ export const useUserStore = defineStore('UserStore', {
   // could also be defined as
   // state: () => ({ count: 0 })
   actions: {
-    increment() {
-      
-    },
+
   },
 })

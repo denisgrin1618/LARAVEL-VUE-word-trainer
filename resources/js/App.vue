@@ -51,7 +51,7 @@
             <v-icon>mdi-fingerprint</v-icon>
         </v-btn> -->
 
-        <span class="mr-2 black--text" v-if="this.isAuthenticated">{{this.user.name}}</span>
+        <!-- <span class="mr-2 black--text" v-if="this.isAuthenticated">{{this.user.name}}</span> -->
 
         <v-btn text color="black" @click="logout" v-if="this.isAuthenticated">
             <span class="mr-2">Logout</span>
@@ -125,6 +125,14 @@ export default {
         }
     },
     methods: {
+        readCookie(){
+            if (this.$cookies.isKey('apitoken')){
+                this.isAuthenticated = true
+                this.user.name = this.$cookies.get('username')
+                this.user.token = this.$cookies.get('apitoken')
+                this.$router.push('/');
+            }           
+        },
         detectScreenChange() {
             this.mobile = window.innerWidth < 560;
         },
@@ -132,6 +140,7 @@ export default {
             this.isAuthenticated = false;
             this.user.name = '';
             this.user.token = '';
+            axios.defaults.headers.common['Authorization'] = null;
             this.$router.push('/signin');
         }
     },
@@ -139,6 +148,7 @@ export default {
         this.$nextTick(() => {
             window.addEventListener('resize', this.detectScreenChange)
         })
+        this.readCookie()
     },
     created() {
         this.detectScreenChange(); // when instance is created

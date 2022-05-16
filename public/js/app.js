@@ -2454,6 +2454,14 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     }
   }),
   methods: {
+    readCookie: function readCookie() {
+      if (this.$cookies.isKey('apitoken')) {
+        this.isAuthenticated = true;
+        this.user.name = this.$cookies.get('username');
+        this.user.token = this.$cookies.get('apitoken');
+        this.$router.push('/');
+      }
+    },
     detectScreenChange: function detectScreenChange() {
       this.mobile = window.innerWidth < 560;
     },
@@ -2461,6 +2469,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       this.isAuthenticated = false;
       this.user.name = '';
       this.user.token = '';
+      axios.defaults.headers.common['Authorization'] = null;
       this.$router.push('/signin');
     }
   },
@@ -2470,6 +2479,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     this.$nextTick(function () {
       window.addEventListener('resize', _this.detectScreenChange);
     });
+    this.readCookie();
   },
   created: function created() {
     this.detectScreenChange(); // when instance is created
@@ -2526,6 +2536,7 @@ function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { va
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
+//
 //
 //
 //
@@ -2624,6 +2635,12 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         _this.user.token = response.data.data.token;
         _this.user.name = response.data.data.name;
         _this.isAuthenticated = true;
+
+        _this.$cookies.set('apitoken', _this.user.token);
+
+        _this.$cookies.set('username', _this.user.name);
+
+        axios.defaults.headers.common['Authorization'] = "Bearer ".concat(_this.user.token);
 
         _this.$router.push('/');
       })["catch"](function (error) {
@@ -2763,12 +2780,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-var _methods;
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
-//
-//
 //
 //
 //
@@ -2933,97 +2944,134 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   created: function created() {
     this.initialize();
   },
-  methods: (_methods = {
-    editTranslation: function editTranslation($t) {
-      axios.post("/api/v1/translations", {
-        word_origin_id: $t.word_origin.id,
-        word_translation_id: $t.word_translation.id
-      }).then(function (response) {
-        $t = response.data.data;
+  methods: {
+    saveTranslation: function saveTranslation(item) {
+      var _this = this;
+
+      var requestOne = axios({
+        method: item.word_origin.id > 0 ? 'put' : 'post',
+        url: '/api/v1/words' + (item.word_origin.id > 0 ? '/' + item.word_origin.id : ''),
+        data: {
+          name: item.word_origin.name,
+          language_id: item.word_origin.language.id
+        }
+      });
+      var requestTwo = axios({
+        method: item.word_translation.id > 0 ? 'put' : 'post',
+        url: '/api/v1/words' + (item.word_translation.id > 0 ? '/' + item.word_translation.id : ''),
+        data: {
+          name: item.word_translation.name,
+          language_id: item.word_translation.language.id
+        }
+      });
+      axios.all([requestOne, requestTwo]).then(axios.spread(function () {
+        for (var _len = arguments.length, responses = new Array(_len), _key = 0; _key < _len; _key++) {
+          responses[_key] = arguments[_key];
+        }
+
+        item.word_origin = responses[0].data.data;
+        item.word_translation = responses[1].data.data;
+
+        if (_this.editedIndex > -1) {
+          Object.assign(_this.words[_this.editedIndex], item);
+        } else if (item.id == 0) {
+          axios.post("/api/v1/translations", {
+            word_origin_id: item.word_origin.id,
+            word_translation_id: item.word_translation.id
+          }).then(function (response) {
+            item = response.data.data;
+
+            _this.words.push(item);
+          });
+        }
+      }))["catch"](function (errors) {
+        console.log(errors);
+      });
+    },
+    saveWords: function saveWords(item) {// axios({
+      //         method: item.word_origin.id > 0 ? 'put' : 'post',
+      //         url: '/api/v1/words' + (item.word_origin.id > 0 ? '/'+item.word_origin.id : ''),
+      //         data: {
+      //             name: item.word_origin.name,
+      //             language_id: item.word_origin.language.id,
+      //         }
+      //     })
+      //     .then(function (response) {
+      //         item.word_origin = response.data.data;
+      //     });
+      // axios({
+      //         method: item.word_translation.id > 0 ? 'put' : 'post',
+      //         url: '/api/v1/words' + (item.word_translation.id > 0 ? '/'+item.word_translation.id : ''),
+      //         data: {
+      //             name: item.word_translation.name,
+      //             language_id: item.word_translation.language.id,
+      //         }
+      //     })
+      //     .then(function (response) {
+      //         item.word_translation = response.data.data;
+      //     });
+    },
+    initialize: function initialize() {
+      var _this2 = this;
+
+      axios.get('/api/v1/translations').then(function (response) {
+        console.log(response);
+        _this2.words = response.data.data;
       })["catch"](function (error) {
         console.log(error);
       });
+      axios.get('/api/v1/languages').then(function (response) {
+        console.log(response);
+        _this2.languages = response.data.data;
+      })["catch"](function (error) {
+        console.log(error);
+      });
+    },
+    editItem: function editItem(item) {
+      this.editedIndex = this.words.indexOf(item);
+      this.editedItem = Object.assign({}, item);
+      this.dialog = true;
+      console.log(item);
+    },
+    deleteItem: function deleteItem(item) {
+      this.editedIndex = this.words.indexOf(item);
+      this.editedItem = Object.assign({}, item);
+      this.dialogDelete = true;
+    },
+    deleteItemConfirm: function deleteItemConfirm() {
+      this.words.splice(this.editedIndex, 1);
+      this.closeDelete();
+    },
+    close: function close() {
+      var _this3 = this;
+
+      this.dialog = false;
+      this.$nextTick(function () {
+        _this3.editedItem = Object.assign({}, _this3.defaultItem);
+        _this3.editedIndex = -1;
+      });
+    },
+    closeDelete: function closeDelete() {
+      var _this4 = this;
+
+      this.dialogDelete = false;
+      this.$nextTick(function () {
+        _this4.editedItem = Object.assign({}, _this4.defaultItem);
+        _this4.editedIndex = -1;
+      });
+    },
+    save: function save() {
+      // this.saveWords(this.editedItem)
+      if (this.editedIndex > -1) {
+        Object.assign(this.words[this.editedIndex], this.editedItem);
+      } else {
+        // this.words.push(this.editedItem)
+        this.saveTranslation(this.editedItem);
+      }
+
+      this.close();
     }
-  }, _defineProperty(_methods, "editTranslation", function editTranslation($t) {
-    // axios.put(`/api/v1/translations/${$t.id}`, {
-    //     word_origin_id: $t.word_origin.id,
-    //     word_translation_id: $t.word_translation.id,
-    // })
-    // .then((response) => {
-    //     console.log(response);
-    // })
-    // .catch(function (error) {
-    //     console.log(error);
-    // });
-    axios.put("/api/v1/words/".concat($t.word_origin.id), {
-      name: $t.word_origin.name,
-      language_id: $t.word_origin.language.id
-    }).then(function (response) {
-      $t.word_origin = response.data.data;
-    })["catch"](function (error) {
-      console.log(error);
-    });
-    axios.put("/api/v1/words/".concat($t.word_translation.id), {
-      name: $t.word_translation.name,
-      language_id: $t.word_translation.language.id
-    }).then(function (response) {
-      $t.word_translation = response.data.data;
-    })["catch"](function (error) {
-      console.log(error);
-    });
-  }), _defineProperty(_methods, "initialize", function initialize() {
-    var _this = this;
-
-    axios.get('/api/v1/translations').then(function (response) {
-      console.log(response);
-      _this.words = response.data.data;
-    })["catch"](function (error) {
-      console.log(error);
-    });
-    axios.get('/api/v1/languages').then(function (response) {
-      console.log(response);
-      _this.languages = response.data.data;
-    })["catch"](function (error) {
-      console.log(error);
-    });
-  }), _defineProperty(_methods, "editItem", function editItem(item) {
-    this.editedIndex = this.words.indexOf(item);
-    this.editedItem = Object.assign({}, item);
-    this.dialog = true;
-    console.log(item);
-  }), _defineProperty(_methods, "deleteItem", function deleteItem(item) {
-    this.editedIndex = this.words.indexOf(item);
-    this.editedItem = Object.assign({}, item);
-    this.dialogDelete = true;
-  }), _defineProperty(_methods, "deleteItemConfirm", function deleteItemConfirm() {
-    this.words.splice(this.editedIndex, 1);
-    this.closeDelete();
-  }), _defineProperty(_methods, "close", function close() {
-    var _this2 = this;
-
-    this.dialog = false;
-    this.$nextTick(function () {
-      _this2.editedItem = Object.assign({}, _this2.defaultItem);
-      _this2.editedIndex = -1;
-    });
-  }), _defineProperty(_methods, "closeDelete", function closeDelete() {
-    var _this3 = this;
-
-    this.dialogDelete = false;
-    this.$nextTick(function () {
-      _this3.editedItem = Object.assign({}, _this3.defaultItem);
-      _this3.editedIndex = -1;
-    });
-  }), _defineProperty(_methods, "save", function save() {
-    if (this.editedIndex > -1) {
-      Object.assign(this.words[this.editedIndex], this.editedItem);
-    } else {
-      this.words.push(this.editedItem);
-    }
-
-    this.editTranslation(this.editedItem);
-    this.close();
-  }), _methods)
+  }
 });
 
 /***/ }),
@@ -3036,11 +3084,13 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm.js");
+/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm.js");
 /* harmony import */ var _App_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./App.vue */ "./resources/js/App.vue");
 /* harmony import */ var _plugins_vuetify__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./plugins/vuetify */ "./resources/js/plugins/vuetify.js");
 /* harmony import */ var _plugins_pinia__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./plugins/pinia */ "./resources/js/plugins/pinia.js");
-/* harmony import */ var _router__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./router */ "./resources/js/router/index.js");
+/* harmony import */ var vue_cookies__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! vue-cookies */ "./node_modules/vue-cookies/vue-cookies.js");
+/* harmony import */ var vue_cookies__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(vue_cookies__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _router__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./router */ "./resources/js/router/index.js");
 __webpack_require__(/*! ./bootstrap */ "./resources/js/bootstrap.js");
 
 
@@ -3048,11 +3098,15 @@ __webpack_require__(/*! ./bootstrap */ "./resources/js/bootstrap.js");
 
 
 
-vue__WEBPACK_IMPORTED_MODULE_4__["default"].config.productionTip = false;
-new vue__WEBPACK_IMPORTED_MODULE_4__["default"]({
+
+vue__WEBPACK_IMPORTED_MODULE_5__["default"].config.productionTip = false;
+vue__WEBPACK_IMPORTED_MODULE_5__["default"].use((vue_cookies__WEBPACK_IMPORTED_MODULE_3___default()), {
+  expire: '7d'
+});
+new vue__WEBPACK_IMPORTED_MODULE_5__["default"]({
   vuetify: _plugins_vuetify__WEBPACK_IMPORTED_MODULE_1__["default"],
   pinia: _plugins_pinia__WEBPACK_IMPORTED_MODULE_2__["default"],
-  router: _router__WEBPACK_IMPORTED_MODULE_3__["default"],
+  router: _router__WEBPACK_IMPORTED_MODULE_4__["default"],
   render: function render(h) {
     return h(_App_vue__WEBPACK_IMPORTED_MODULE_0__["default"]);
   }
@@ -3197,15 +3251,6 @@ var routes = [{
   path: '/words',
   name: 'words',
   component: _views_WordsView_vue__WEBPACK_IMPORTED_MODULE_3__["default"]
-}, {
-  path: '/about',
-  name: 'about',
-  // route level code-splitting
-  // this generates a separate chunk (about.[hash].js) for this route
-  // which is lazy-loaded when the route is visited.
-  component: function component() {
-    return __webpack_require__.e(/*! import() | about */ "about").then(__webpack_require__.bind(__webpack_require__, /*! ../views/AboutView.vue */ "./resources/js/views/AboutView.vue"));
-  }
 }];
 var router = new vue_router__WEBPACK_IMPORTED_MODULE_6__["default"]({
   mode: 'history',
@@ -3216,10 +3261,8 @@ router.beforeEach(function (to, from, next) {
   var userStore = (0,_store_user__WEBPACK_IMPORTED_MODULE_4__.useUserStore)();
 
   if (userStore.isAuthenticated || to.name === 'signin') {
-    axios.defaults.headers.common['Authorization'] = "Bearer ".concat(userStore.user.token);
     next();
   } else {
-    axios.defaults.headers.common['Authorization'] = null;
     next('/signin');
   }
 });
@@ -3252,9 +3295,7 @@ var useUserStore = (0,pinia__WEBPACK_IMPORTED_MODULE_0__.defineStore)('UserStore
   },
   // could also be defined as
   // state: () => ({ count: 0 })
-  actions: {
-    increment: function increment() {}
-  }
+  actions: {}
 });
 
 /***/ }),
@@ -24108,6 +24149,161 @@ module.exports = function (list, options) {
 
 /***/ }),
 
+/***/ "./node_modules/vue-cookies/vue-cookies.js":
+/*!*************************************************!*\
+  !*** ./node_modules/vue-cookies/vue-cookies.js ***!
+  \*************************************************/
+/***/ ((module) => {
+
+/**
+ * Vue Cookies v1.8.1
+ * https://github.com/cmp-cc/vue-cookies
+ *
+ * Copyright 2016, cmp-cc
+ * Released under the MIT license
+ */
+
+ (function () {
+
+  var defaultConfig = {
+    expires: '1d',
+    path: '; path=/',
+    domain: '',
+    secure: '',
+    sameSite: '; SameSite=Lax'
+  };
+
+  var VueCookies = {
+    // install of Vue
+    install: function (Vue, options) {
+      if (options) this.config(options.expires, options.path, options.domain, options.secure, options.sameSite);
+      if (Vue.prototype) Vue.prototype.$cookies = this;
+      if (Vue.config && Vue.config.globalProperties) {
+        Vue.config.globalProperties.$cookies = this;
+        Vue.provide('$cookies', this);
+      }
+      Vue.$cookies = this;
+    },
+    config: function (expires, path, domain, secure, sameSite) {
+      defaultConfig.expires = expires ? expires : '1d';
+      defaultConfig.path = path ? '; path=' + path : '; path=/';
+      defaultConfig.domain = domain ? '; domain=' + domain : '';
+      defaultConfig.secure = secure ? '; Secure' : '';
+      defaultConfig.sameSite = sameSite ? '; SameSite=' + sameSite : '; SameSite=Lax';
+    },
+    get: function (key) {
+      var value = decodeURIComponent(document.cookie.replace(new RegExp('(?:(?:^|.*;)\\s*' + encodeURIComponent(key).replace(/[\-\.\+\*]/g, '\\$&') + '\\s*\\=\\s*([^;]*).*$)|^.*$'), '$1')) || null;
+
+      if (value && value.substring(0, 1) === '{' && value.substring(value.length - 1, value.length) === '}') {
+        try {
+          value = JSON.parse(value);
+        } catch (e) {
+          return value;
+        }
+      }
+      return value;
+    },
+    set: function (key, value, expires, path, domain, secure, sameSite) {
+      if (!key) {
+        throw new Error('Cookie name is not found in the first argument.');
+      } else if (/^(?:expires|max\-age|path|domain|secure|SameSite)$/i.test(key)) {
+        throw new Error('Cookie name illegality. Cannot be set to ["expires","max-age","path","domain","secure","SameSite"]\t current key name: ' + key);
+      }
+      // support json object
+      if (value && value.constructor === Object) {
+        value = JSON.stringify(value);
+      }
+      var _expires = '';
+      expires = expires == undefined ? defaultConfig.expires : expires;
+      if (expires && expires != 0) {
+        switch (expires.constructor) {
+          case Number:
+            if (expires === Infinity || expires === -1) _expires = '; expires=Fri, 31 Dec 9999 23:59:59 GMT';
+            else _expires = '; max-age=' + expires;
+            break;
+          case String:
+            if (/^(?:\d+(y|m|d|h|min|s))$/i.test(expires)) {
+              // get capture number group
+              var _expireTime = expires.replace(/^(\d+)(?:y|m|d|h|min|s)$/i, '$1');
+              // get capture type group , to lower case
+              switch (expires.replace(/^(?:\d+)(y|m|d|h|min|s)$/i, '$1').toLowerCase()) {
+                  // Frequency sorting
+                case 'm':
+                  _expires = '; max-age=' + +_expireTime * 2592000;
+                  break; // 60 * 60 * 24 * 30
+                case 'd':
+                  _expires = '; max-age=' + +_expireTime * 86400;
+                  break; // 60 * 60 * 24
+                case 'h':
+                  _expires = '; max-age=' + +_expireTime * 3600;
+                  break; // 60 * 60
+                case 'min':
+                  _expires = '; max-age=' + +_expireTime * 60;
+                  break; // 60
+                case 's':
+                  _expires = '; max-age=' + _expireTime;
+                  break;
+                case 'y':
+                  _expires = '; max-age=' + +_expireTime * 31104000;
+                  break; // 60 * 60 * 24 * 30 * 12
+                default:
+                  new Error('unknown exception of "set operation"');
+              }
+            } else {
+              _expires = '; expires=' + expires;
+            }
+            break;
+          case Date:
+            _expires = '; expires=' + expires.toUTCString();
+            break;
+        }
+      }
+      document.cookie =
+          encodeURIComponent(key) + '=' + encodeURIComponent(value) +
+          _expires +
+          (domain ? '; domain=' + domain : defaultConfig.domain) +
+          (path ? '; path=' + path : defaultConfig.path) +
+          (secure == undefined ? defaultConfig.secure : secure ? '; Secure' : '') +
+          (sameSite == undefined ? defaultConfig.sameSite : (sameSite ? '; SameSite=' + sameSite : ''));
+      return this;
+    },
+    remove: function (key, path, domain) {
+      if (!key || !this.isKey(key)) {
+        return false;
+      }
+      document.cookie = encodeURIComponent(key) +
+          '=; expires=Thu, 01 Jan 1970 00:00:00 GMT' +
+          (domain ? '; domain=' + domain : defaultConfig.domain) +
+          (path ? '; path=' + path : defaultConfig.path) +
+          '; SameSite=Lax';
+      return true;
+    },
+    isKey: function (key) {
+      return (new RegExp('(?:^|;\\s*)' + encodeURIComponent(key).replace(/[\-\.\+\*]/g, '\\$&') + '\\s*\\=')).test(document.cookie);
+    },
+    keys: function () {
+      if (!document.cookie) return [];
+      var _keys = document.cookie.replace(/((?:^|\s*;)[^\=]+)(?=;|$)|^\s*|\s*(?:\=[^;]*)?(?:\1|$)/g, '').split(/\s*(?:\=[^;]*)?;\s*/);
+      for (var _index = 0; _index < _keys.length; _index++) {
+        _keys[_index] = decodeURIComponent(_keys[_index]);
+      }
+      return _keys;
+    }
+  };
+
+  if (true) {
+    module.exports = VueCookies;
+  } else {}
+  // vue-cookies can exist independently,no dependencies library
+  if (typeof window !== 'undefined') {
+    window.$cookies = VueCookies;
+  }
+
+})();
+
+
+/***/ }),
+
 /***/ "./resources/js/App.vue?vue&type=script&lang=js&":
 /*!*******************************************************!*\
   !*** ./resources/js/App.vue?vue&type=script&lang=js& ***!
@@ -24490,12 +24686,6 @@ var render = function () {
               ),
               _vm._v(" "),
               this.isAuthenticated
-                ? _c("span", { staticClass: "mr-2 black--text" }, [
-                    _vm._v(_vm._s(this.user.name)),
-                  ])
-                : _vm._e(),
-              _vm._v(" "),
-              this.isAuthenticated
                 ? _c(
                     "v-btn",
                     {
@@ -24686,21 +24876,19 @@ var render = function () {
         "v-row",
         { staticClass: "text-center" },
         [
-          _c(
-            "v-col",
-            { attrs: { cols: "12" } },
-            [
-              _c("v-img", {
-                staticClass: "my-3",
-                attrs: { src: "/images/logo.svg", contain: "", height: "200" },
-              }),
-            ],
-            1
-          ),
+          _c("v-col", { attrs: { cols: "12" } }),
           _vm._v(" "),
           _c("v-col", { staticClass: "mb-4" }, [
             _c("h1", { staticClass: "display-2 font-weight-bold mb-3" }, [
-              _vm._v("\n        HOME " + _vm._s(this.user.name) + "\n      "),
+              _vm._v(
+                "\n        Welcome " + _vm._s(this.user.name) + "\n      "
+              ),
+            ]),
+            _vm._v(" "),
+            _c("p", [
+              _vm._v(
+                "This site will help you learn foreign languages by repeating difficult words"
+              ),
             ]),
           ]),
         ],
@@ -25165,21 +25353,21 @@ var render = function () {
                                               attrs: {
                                                 items: _vm.languages,
                                                 "item-text": "name",
+                                                "return-object": "",
                                               },
                                               model: {
                                                 value:
                                                   _vm.editedItem.word_origin
-                                                    .language.name,
+                                                    .language,
                                                 callback: function ($$v) {
                                                   _vm.$set(
-                                                    _vm.editedItem.word_origin
-                                                      .language,
-                                                    "name",
+                                                    _vm.editedItem.word_origin,
+                                                    "language",
                                                     $$v
                                                   )
                                                 },
                                                 expression:
-                                                  "editedItem.word_origin.language.name",
+                                                  "editedItem.word_origin.language",
                                               },
                                             }),
                                           ],
@@ -25232,23 +25420,22 @@ var render = function () {
                                               attrs: {
                                                 items: _vm.languages,
                                                 "item-text": "name",
+                                                "return-object": "",
                                               },
                                               model: {
                                                 value:
                                                   _vm.editedItem
-                                                    .word_translation.language
-                                                    .name,
+                                                    .word_translation.language,
                                                 callback: function ($$v) {
                                                   _vm.$set(
                                                     _vm.editedItem
-                                                      .word_translation
-                                                      .language,
-                                                    "name",
+                                                      .word_translation,
+                                                    "language",
                                                     $$v
                                                   )
                                                 },
                                                 expression:
-                                                  "editedItem.word_translation.language.name",
+                                                  "editedItem.word_translation.language",
                                               },
                                             }),
                                           ],
@@ -42103,8 +42290,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _node_modules_vuetify_loader_lib_runtime_installComponents_js__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_node_modules_vuetify_loader_lib_runtime_installComponents_js__WEBPACK_IMPORTED_MODULE_3__);
 /* harmony import */ var vuetify_lib_components_VGrid__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! vuetify/lib/components/VGrid */ "./node_modules/vuetify/lib/components/VGrid/VCol.js");
 /* harmony import */ var vuetify_lib_components_VGrid__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! vuetify/lib/components/VGrid */ "./node_modules/vuetify/lib/components/VGrid/VContainer.js");
-/* harmony import */ var vuetify_lib_components_VImg__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! vuetify/lib/components/VImg */ "./node_modules/vuetify/lib/components/VImg/VImg.js");
-/* harmony import */ var vuetify_lib_components_VGrid__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! vuetify/lib/components/VGrid */ "./node_modules/vuetify/lib/components/VGrid/VRow.js");
+/* harmony import */ var vuetify_lib_components_VGrid__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! vuetify/lib/components/VGrid */ "./node_modules/vuetify/lib/components/VGrid/VRow.js");
 
 
 
@@ -42128,8 +42314,7 @@ var component = (0,_node_modules_vue_loader_lib_runtime_componentNormalizer_js__
 
 
 
-
-_node_modules_vuetify_loader_lib_runtime_installComponents_js__WEBPACK_IMPORTED_MODULE_3___default()(component, {VCol: vuetify_lib_components_VGrid__WEBPACK_IMPORTED_MODULE_4__["default"],VContainer: vuetify_lib_components_VGrid__WEBPACK_IMPORTED_MODULE_5__["default"],VImg: vuetify_lib_components_VImg__WEBPACK_IMPORTED_MODULE_6__["default"],VRow: vuetify_lib_components_VGrid__WEBPACK_IMPORTED_MODULE_7__["default"]})
+_node_modules_vuetify_loader_lib_runtime_installComponents_js__WEBPACK_IMPORTED_MODULE_3___default()(component, {VCol: vuetify_lib_components_VGrid__WEBPACK_IMPORTED_MODULE_4__["default"],VContainer: vuetify_lib_components_VGrid__WEBPACK_IMPORTED_MODULE_5__["default"],VRow: vuetify_lib_components_VGrid__WEBPACK_IMPORTED_MODULE_6__["default"]})
 
 
 /* hot reload */
@@ -64358,39 +64543,6 @@ module.exports = JSON.parse('{"name":"axios","version":"0.21.4","description":"P
 /******/ 		};
 /******/ 	})();
 /******/ 	
-/******/ 	/* webpack/runtime/ensure chunk */
-/******/ 	(() => {
-/******/ 		__webpack_require__.f = {};
-/******/ 		// This file contains only the entry chunk.
-/******/ 		// The chunk loading function for additional chunks
-/******/ 		__webpack_require__.e = (chunkId) => {
-/******/ 			return Promise.all(Object.keys(__webpack_require__.f).reduce((promises, key) => {
-/******/ 				__webpack_require__.f[key](chunkId, promises);
-/******/ 				return promises;
-/******/ 			}, []));
-/******/ 		};
-/******/ 	})();
-/******/ 	
-/******/ 	/* webpack/runtime/get javascript chunk filename */
-/******/ 	(() => {
-/******/ 		// This function allow to reference async chunks
-/******/ 		__webpack_require__.u = (chunkId) => {
-/******/ 			// return url for filenames not based on template
-/******/ 			if (chunkId === "about") return "js/" + chunkId + ".js";
-/******/ 			// return url for filenames based on template
-/******/ 			return undefined;
-/******/ 		};
-/******/ 	})();
-/******/ 	
-/******/ 	/* webpack/runtime/get mini-css chunk filename */
-/******/ 	(() => {
-/******/ 		// This function allow to reference all chunks
-/******/ 		__webpack_require__.miniCssF = (chunkId) => {
-/******/ 			// return url for filenames based on template
-/******/ 			return "" + chunkId + ".css";
-/******/ 		};
-/******/ 	})();
-/******/ 	
 /******/ 	/* webpack/runtime/global */
 /******/ 	(() => {
 /******/ 		__webpack_require__.g = (function() {
@@ -64406,52 +64558,6 @@ module.exports = JSON.parse('{"name":"axios","version":"0.21.4","description":"P
 /******/ 	/* webpack/runtime/hasOwnProperty shorthand */
 /******/ 	(() => {
 /******/ 		__webpack_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
-/******/ 	})();
-/******/ 	
-/******/ 	/* webpack/runtime/load script */
-/******/ 	(() => {
-/******/ 		var inProgress = {};
-/******/ 		// data-webpack is not used as build has no uniqueName
-/******/ 		// loadScript function to load a script via script tag
-/******/ 		__webpack_require__.l = (url, done, key, chunkId) => {
-/******/ 			if(inProgress[url]) { inProgress[url].push(done); return; }
-/******/ 			var script, needAttach;
-/******/ 			if(key !== undefined) {
-/******/ 				var scripts = document.getElementsByTagName("script");
-/******/ 				for(var i = 0; i < scripts.length; i++) {
-/******/ 					var s = scripts[i];
-/******/ 					if(s.getAttribute("src") == url) { script = s; break; }
-/******/ 				}
-/******/ 			}
-/******/ 			if(!script) {
-/******/ 				needAttach = true;
-/******/ 				script = document.createElement('script');
-/******/ 		
-/******/ 				script.charset = 'utf-8';
-/******/ 				script.timeout = 120;
-/******/ 				if (__webpack_require__.nc) {
-/******/ 					script.setAttribute("nonce", __webpack_require__.nc);
-/******/ 				}
-/******/ 		
-/******/ 				script.src = url;
-/******/ 			}
-/******/ 			inProgress[url] = [done];
-/******/ 			var onScriptComplete = (prev, event) => {
-/******/ 				// avoid mem leaks in IE.
-/******/ 				script.onerror = script.onload = null;
-/******/ 				clearTimeout(timeout);
-/******/ 				var doneFns = inProgress[url];
-/******/ 				delete inProgress[url];
-/******/ 				script.parentNode && script.parentNode.removeChild(script);
-/******/ 				doneFns && doneFns.forEach((fn) => (fn(event)));
-/******/ 				if(prev) return prev(event);
-/******/ 			}
-/******/ 			;
-/******/ 			var timeout = setTimeout(onScriptComplete.bind(null, undefined, { type: 'timeout', target: script }), 120000);
-/******/ 			script.onerror = onScriptComplete.bind(null, script.onerror);
-/******/ 			script.onload = onScriptComplete.bind(null, script.onload);
-/******/ 			needAttach && document.head.appendChild(script);
-/******/ 		};
 /******/ 	})();
 /******/ 	
 /******/ 	/* webpack/runtime/make namespace object */
@@ -64474,11 +64580,6 @@ module.exports = JSON.parse('{"name":"axios","version":"0.21.4","description":"P
 /******/ 		};
 /******/ 	})();
 /******/ 	
-/******/ 	/* webpack/runtime/publicPath */
-/******/ 	(() => {
-/******/ 		__webpack_require__.p = "/";
-/******/ 	})();
-/******/ 	
 /******/ 	/* webpack/runtime/jsonp chunk loading */
 /******/ 	(() => {
 /******/ 		// no baseURI
@@ -64491,44 +64592,7 @@ module.exports = JSON.parse('{"name":"axios","version":"0.21.4","description":"P
 /******/ 			"css/app": 0
 /******/ 		};
 /******/ 		
-/******/ 		__webpack_require__.f.j = (chunkId, promises) => {
-/******/ 				// JSONP chunk loading for javascript
-/******/ 				var installedChunkData = __webpack_require__.o(installedChunks, chunkId) ? installedChunks[chunkId] : undefined;
-/******/ 				if(installedChunkData !== 0) { // 0 means "already installed".
-/******/ 		
-/******/ 					// a Promise means "currently loading".
-/******/ 					if(installedChunkData) {
-/******/ 						promises.push(installedChunkData[2]);
-/******/ 					} else {
-/******/ 						if("css/app" != chunkId) {
-/******/ 							// setup Promise in chunk cache
-/******/ 							var promise = new Promise((resolve, reject) => (installedChunkData = installedChunks[chunkId] = [resolve, reject]));
-/******/ 							promises.push(installedChunkData[2] = promise);
-/******/ 		
-/******/ 							// start chunk loading
-/******/ 							var url = __webpack_require__.p + __webpack_require__.u(chunkId);
-/******/ 							// create error before stack unwound to get useful stacktrace later
-/******/ 							var error = new Error();
-/******/ 							var loadingEnded = (event) => {
-/******/ 								if(__webpack_require__.o(installedChunks, chunkId)) {
-/******/ 									installedChunkData = installedChunks[chunkId];
-/******/ 									if(installedChunkData !== 0) installedChunks[chunkId] = undefined;
-/******/ 									if(installedChunkData) {
-/******/ 										var errorType = event && (event.type === 'load' ? 'missing' : event.type);
-/******/ 										var realSrc = event && event.target && event.target.src;
-/******/ 										error.message = 'Loading chunk ' + chunkId + ' failed.\n(' + errorType + ': ' + realSrc + ')';
-/******/ 										error.name = 'ChunkLoadError';
-/******/ 										error.type = errorType;
-/******/ 										error.request = realSrc;
-/******/ 										installedChunkData[1](error);
-/******/ 									}
-/******/ 								}
-/******/ 							};
-/******/ 							__webpack_require__.l(url, loadingEnded, "chunk-" + chunkId, chunkId);
-/******/ 						} else installedChunks[chunkId] = 0;
-/******/ 					}
-/******/ 				}
-/******/ 		};
+/******/ 		// no chunk on demand loading
 /******/ 		
 /******/ 		// no prefetching
 /******/ 		

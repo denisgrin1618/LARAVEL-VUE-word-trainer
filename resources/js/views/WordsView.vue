@@ -25,16 +25,14 @@
                                         <v-text-field v-model="editedItem.word_origin.name" label="Word1"></v-text-field>
                                     </v-col>
                                     <v-col cols="12" sm="6" md="6">
-                                        <v-select v-model="editedItem.word_origin.language.name" :items="languages" item-text="name"></v-select>
-                                        <!-- <v-text-field v-model="editedItem.word_origin.language.name" label="Lang1"></v-text-field> -->
+                                        <v-select v-model="editedItem.word_origin.language" :items="languages" item-text="name" return-object></v-select>
                                     </v-col>
 
                                     <v-col cols="12" sm="6" md="6">
                                         <v-text-field v-model="editedItem.word_translation.name" label="Word2"></v-text-field>
                                     </v-col>
                                     <v-col cols="12" sm="6" md="6">
-                                        <v-select v-model="editedItem.word_translation.language.name" :items="languages" item-text="name"></v-select> 
-                                        <!-- <v-text-field v-model="editedItem.word_translation.language.name" label="Lang2"></v-text-field> -->
+                                        <v-select v-model="editedItem.word_translation.language" :items="languages" item-text="name" return-object></v-select>
                                     </v-col>
                                 </v-row>
                             </v-container>
@@ -175,51 +173,72 @@ export default {
 
     methods: {
 
-        editTranslation($t) {
-            axios.post(`/api/v1/translations`, {
-                    word_origin_id: $t.word_origin.id,
-                    word_translation_id: $t.word_translation.id,
+        saveTranslation(item) {
+            let requestOne = axios({
+                method: item.word_origin.id > 0 ? 'put' : 'post',
+                url: '/api/v1/words' + (item.word_origin.id > 0 ? '/' + item.word_origin.id : ''),
+                data: {
+                    name: item.word_origin.name,
+                    language_id: item.word_origin.language.id,
+                }
+            })
+
+            let requestTwo = axios({
+                method: item.word_translation.id > 0 ? 'put' : 'post',
+                url: '/api/v1/words' + (item.word_translation.id > 0 ? '/' + item.word_translation.id : ''),
+                data: {
+                    name: item.word_translation.name,
+                    language_id: item.word_translation.language.id,
+                }
+            })
+
+            axios.all([requestOne, requestTwo])
+                .then(axios.spread((...responses) => {
+                    item.word_origin = responses[0].data.data
+                    item.word_translation = responses[1].data.data
+
+                    if (this.editedIndex > -1) {
+                        Object.assign(this.words[this.editedIndex], item)
+                    } else if (item.id == 0) {
+                        axios.post(`/api/v1/translations`, {
+                                word_origin_id: item.word_origin.id,
+                                word_translation_id: item.word_translation.id,
+                            })
+                            .then(response => {
+                                item = response.data.data
+                                this.words.push(item)
+                            })
+                    }
+
+                })).catch(errors => {
+                    console.log(errors);
                 })
-                .then((response) => {
-                    $t = response.data.data;
-                })
-                .catch(function (error) {
-                    console.log(error);
-                });
         },
-        editTranslation($t) {
-            // axios.put(`/api/v1/translations/${$t.id}`, {
-            //     word_origin_id: $t.word_origin.id,
-            //     word_translation_id: $t.word_translation.id,
-            // })
-            // .then((response) => {
-            //     console.log(response);
-            // })
-            // .catch(function (error) {
-            //     console.log(error);
-            // });
+        saveWords(item) {
+            // axios({
+            //         method: item.word_origin.id > 0 ? 'put' : 'post',
+            //         url: '/api/v1/words' + (item.word_origin.id > 0 ? '/'+item.word_origin.id : ''),
+            //         data: {
+            //             name: item.word_origin.name,
+            //             language_id: item.word_origin.language.id,
+            //         }
+            //     })
+            //     .then(function (response) {
+            //         item.word_origin = response.data.data;
+            //     });
 
-            axios.put(`/api/v1/words/${$t.word_origin.id}`, {
-                    name: $t.word_origin.name,
-                    language_id: $t.word_origin.language.id,
-                })
-                .then((response) => {
-                    $t.word_origin = response.data.data;
-                })
-                .catch(function (error) {
-                    console.log(error);
-                });
+            // axios({
+            //         method: item.word_translation.id > 0 ? 'put' : 'post',
+            //         url: '/api/v1/words' + (item.word_translation.id > 0 ? '/'+item.word_translation.id : ''),
+            //         data: {
+            //             name: item.word_translation.name,
+            //             language_id: item.word_translation.language.id,
+            //         }
+            //     })
+            //     .then(function (response) {
+            //         item.word_translation = response.data.data;
+            //     });
 
-            axios.put(`/api/v1/words/${$t.word_translation.id}`, {
-                    name: $t.word_translation.name,
-                    language_id: $t.word_translation.language.id,
-                })
-                .then((response) => {
-                    $t.word_translation = response.data.data;
-                })
-                .catch(function (error) {
-                    console.log(error);
-                });
         },
         initialize() {
 
@@ -278,12 +297,14 @@ export default {
         },
 
         save() {
+            // this.saveWords(this.editedItem)
+
             if (this.editedIndex > -1) {
                 Object.assign(this.words[this.editedIndex], this.editedItem)
             } else {
-                this.words.push(this.editedItem)
+                // this.words.push(this.editedItem)
+                this.saveTranslation(this.editedItem)
             }
-            this.editTranslation(this.editedItem)
             this.close()
         },
     },

@@ -53,6 +53,9 @@ export default {
             this.user.token = response.data.data.token;
             this.user.name = response.data.data.name;
             this.isAuthenticated = true;
+            this.$cookies.set('apitoken', this.user.token)
+            this.$cookies.set('username', this.user.name)
+            axios.defaults.headers.common['Authorization'] = `Bearer ${this.user.token}`;
             this.$router.push('/') 
         })
         .catch(function (error) {

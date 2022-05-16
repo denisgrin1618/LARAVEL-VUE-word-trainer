@@ -48,7 +48,6 @@ class WordResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'language' => new LanguageResource($this->language),
-            'user_id' => $this->user_id,
             'created_at' => $this->created_at->format('d/m/Y'),
             'updated_at' => $this->updated_at->format('d/m/Y'),
         ];
