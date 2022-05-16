@@ -4,6 +4,36 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
+
+/**
+ * @OA\Schema(
+ *     title="WordResource",
+ *     description="Word resource",
+ *     @OA\Xml(
+ *         name="WordResource"
+ *     ),
+ *     @OA\Property(
+ *          property="id",
+ *          type="integer"
+ *     ),
+ *     @OA\Property(
+ *          property="name",
+ *          type="string"
+ *     ),
+ *     @OA\Property(
+ *          property="language",
+ *          ref="#/components/schemas/LanguageResource"
+ *     ),
+ *     @OA\Property(
+ *          property="created_at",
+ *          type="date"
+ *     ),
+ *     @OA\Property(
+ *          property="updated_at",
+ *          type="date"
+ *     ),
+ * )
+ */
 class WordResource extends JsonResource
 {
     /**
@@ -17,7 +47,7 @@ class WordResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
-            'language_id' => $this->language_id,
+            'language' => new LanguageResource($this->language),
             'created_at' => $this->created_at->format('d/m/Y'),
             'updated_at' => $this->updated_at->format('d/m/Y'),
         ];

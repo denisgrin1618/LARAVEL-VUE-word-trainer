@@ -1,5 +1,5 @@
 <template>
-<v-app>
+<v-app :style="{background: $vuetify.theme.themes[theme].background}">
     <v-app-bar app color="#F5F7F6" dark v-if="mobile">
 
         <v-app-bar-nav-icon @click="drawer = true" color="black"></v-app-bar-nav-icon>
@@ -16,23 +16,32 @@
 
         <div class="d-flex align-center">
             <router-link to="/">
-                <v-img :src="'/images/logo.svg'" alt="Vuetify Logo" class="shrink mr-2" contain transition="scale-transition" height="40" width="100" to="/" />
+                <v-img :src="'/images/logo.svg'" alt="Logo" class="shrink mr-2" contain transition="scale-transition" height="40" width="100" to="/" />
             </router-link> |
         </div>
 
-        <v-spacer></v-spacer>
+        <v-tabs color="black" centered>
 
-        <v-btn text color="black" to="/signin">
-            <span class="mr-2">Sign in</span>
-            <v-icon>mdi-lock-open</v-icon>
-        </v-btn>
+            <v-spacer></v-spacer>
 
-        <v-btn text color="black" to="/signup">
-            <span class="mr-2">Sign up</span>
-            <v-icon>mdi-fingerprint</v-icon>
-        </v-btn>
+            <v-tab class="black--text" to="/">Home</v-tab>
+            <v-tab class="black--text" to="/words">Words</v-tab>
+            <v-tab class="black--text" to="/statistics">Statistics</v-tab>
+            <v-tab class="black--text" to="/quiz">Quiz</v-tab>
 
-        <v-btn text color="black" to="/">
+            <v-spacer></v-spacer>
+
+            <v-tab class="black--text" to="/signin" v-if="!this.isAuthenticated">
+                <span class="mr-2">Sign in</span>
+                <v-icon color="black">mdi-lock-open</v-icon>
+            </v-tab>
+            <v-tab class="black--text" to="/signup" v-if="!this.isAuthenticated">
+                <span class="mr-2">Sign up</span>
+                <v-icon color="black">mdi-fingerprint</v-icon>
+            </v-tab>
+        </v-tabs>
+
+        <v-btn text color="black" @click="logout" v-if="this.isAuthenticated">
             <span class="mr-2">Logout</span>
             <v-icon>mdi-logout</v-icon>
         </v-btn>
@@ -49,21 +58,42 @@
                     <v-list-item-title>Home</v-list-item-title>
                 </v-list-item>
 
-                <v-list-item to="/signin">
+                <v-list-item to="/words">
+                    <v-list-item-icon>
+                        <v-icon>mdi-alpha-a-box-outline</v-icon>
+                    </v-list-item-icon>
+                    <v-list-item-title>Words</v-list-item-title>
+                </v-list-item>
+
+                <v-list-item to="/statistics">
+                    <v-list-item-icon>
+                        <v-icon>mdi-book</v-icon>
+                    </v-list-item-icon>
+                    <v-list-item-title>Statistics</v-list-item-title>
+                </v-list-item>
+
+                <v-list-item to="/quiz">
+                    <v-list-item-icon>
+                        <v-icon>mdi-account-check</v-icon>
+                    </v-list-item-icon>
+                    <v-list-item-title>Quiz</v-list-item-title>
+                </v-list-item>
+
+                <v-list-item to="/signin" v-if="!this.isAuthenticated">
                     <v-list-item-icon>
                         <v-icon>mdi-lock-open</v-icon>
                     </v-list-item-icon>
                     <v-list-item-title>Sign in</v-list-item-title>
                 </v-list-item>
 
-                <v-list-item to="/signup">
+                <v-list-item to="/signup" v-if="!this.isAuthenticated">
                     <v-list-item-icon>
                         <v-icon>mdi-fingerprint</v-icon>
                     </v-list-item-icon>
                     <v-list-item-title>Sign up</v-list-item-title>
                 </v-list-item>
 
-                <v-list-item to="/">
+                <v-list-item @click="logout" v-if="this.isAuthenticated">
                     <v-list-item-icon>
                         <v-icon>mdi-logout</v-icon>
                     </v-list-item-icon>
@@ -74,60 +104,68 @@
     </v-navigation-drawer>
 
     <v-main>
-        <!-- <HelloWorld/> -->
-
+        <!-- <Alert message="sdfsdf" type="error"></Alert> -->
         <router-view />
     </v-main>
 </v-app>
-
-<!-- <div id="app">
-    <nav>
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </nav>
-    <router-view/>
-  </div> -->
 </template>
 
 <script>
-// import HelloWorld from './components/HelloWorld';
+import Alert from './components/Alert.vue'
+import {
+    mapWritableState
+} from 'pinia'
+import {
+    useUserStore
+} from "./store/user";
 
 export default {
     name: 'App',
 
-    // components: {
-    //   HelloWorld,
-    // },
-
+    components: {
+        Alert
+    },
     data() {
         return {
             drawer: false,
             mobile: false
         }
     },
-    // computed: {
-    //     mobile() {
-    //         return this.$vuetify.breakpoint.sm
-    //     },
-    // }
-
-
-
+    computed: {
+        ...mapWritableState(useUserStore, ['user', 'isAuthenticated']),
+        theme() {
+            return (this.$vuetify.theme.dark) ? 'dark' : 'light'
+        }
+    },
     methods: {
+        readCookie() {
+            if (this.$cookies.isKey('apitoken')) {
+                this.isAuthenticated = true
+                this.user.name = this.$cookies.get('username')
+                this.user.token = this.$cookies.get('apitoken')
+                this.$router.push('/');
+            }
+        },
         detectScreenChange() {
             this.mobile = window.innerWidth < 560;
+        },
+        logout() {
+            this.isAuthenticated = false;
+            this.user.name = '';
+            this.user.token = '';
+            axios.defaults.headers.common['Authorization'] = null;
+            this.$router.push('/signin');
         }
     },
     mounted() {
         this.$nextTick(() => {
             window.addEventListener('resize', this.detectScreenChange)
         })
+        this.readCookie()
     },
     created() {
         this.detectScreenChange(); // when instance is created
     }
-
-
 
 };
 </script>

@@ -1,8 +1,11 @@
 <?php
 
+use App\Http\Controllers\API\LanguageController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\RegisterController;
+use App\Http\Controllers\API\TranslationController;
 use App\Http\Controllers\API\WordController;
+use App\Models\Language;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,18 +20,15 @@ use App\Http\Controllers\API\WordController;
 
 Route::post('register', [RegisterController::class, 'register']);
 Route::post('login', [RegisterController::class, 'login']);
-Route::get('test', function () {
-    return 'Hello GET2';
-});
 
-Route::post('test', function () {
-    return 'Hello POST';
-});
-     
-Route::middleware('auth:sanctum')->group( function () {
-
+Route::middleware('auth:sanctum')
+    ->prefix('v1')
+    ->name('api.')
+    ->group( function () {
+    
     Route::apiResources([
         'words' => WordController::class,
+        'translations' => TranslationController::class,
+        'languages' => LanguageController::class
     ]);
-
 });

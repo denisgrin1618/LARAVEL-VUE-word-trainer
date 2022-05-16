@@ -1,0 +1,314 @@
+<template>
+<v-container>
+
+    <v-data-table :headers="headers" :items="words" :languages="languages" sort-by="calories" class="elevation-1" :items-per-page="5">
+        <template v-slot:top>
+            <v-toolbar flat>
+                <!-- <v-toolbar-title>My CRUD</v-toolbar-title> -->
+                <v-divider class="mx-4" inset vertical></v-divider>
+                <v-spacer></v-spacer>
+                <v-dialog v-model="dialog" max-width="500px">
+                    <template v-slot:activator="{ on, attrs }">
+                        <v-btn color="primary" dark class="mb-2" v-bind="attrs" v-on="on">
+                            New Item
+                        </v-btn>
+                    </template>
+                    <v-card>
+                        <v-card-title>
+                            <span class="text-h5">{{ formTitle }}</span>
+                        </v-card-title>
+
+                        <v-card-text>
+                            <v-container>
+                                <v-row>
+                                    <v-col cols="12" sm="6" md="6">
+                                        <v-text-field v-model="editedItem.word_origin.name" label="Word1"></v-text-field>
+                                    </v-col>
+                                    <v-col cols="12" sm="6" md="6">
+                                        <v-select v-model="editedItem.word_origin.language" :items="languages" item-text="name" return-object></v-select>
+                                    </v-col>
+
+                                    <v-col cols="12" sm="6" md="6">
+                                        <v-text-field v-model="editedItem.word_translation.name" label="Word2"></v-text-field>
+                                    </v-col>
+                                    <v-col cols="12" sm="6" md="6">
+                                        <v-select v-model="editedItem.word_translation.language" :items="languages" item-text="name" return-object></v-select>
+                                    </v-col>
+                                </v-row>
+                            </v-container>
+                        </v-card-text>
+
+                        <v-card-actions>
+                            <v-spacer></v-spacer>
+                            <v-btn color="blue darken-1" text @click="close">
+                                Cancel
+                            </v-btn>
+                            <v-btn color="blue darken-1" text @click="save">
+                                Save
+                            </v-btn>
+                        </v-card-actions>
+                    </v-card>
+                </v-dialog>
+                <v-dialog v-model="dialogDelete" max-width="500px">
+                    <v-card>
+                        <v-card-title class="text-h5">Are you sure you want to delete this item?</v-card-title>
+                        <v-card-actions>
+                            <v-spacer></v-spacer>
+                            <v-btn color="blue darken-1" text @click="closeDelete">Cancel</v-btn>
+                            <v-btn color="blue darken-1" text @click="deleteItemConfirm">OK</v-btn>
+                            <v-spacer></v-spacer>
+                        </v-card-actions>
+                    </v-card>
+                </v-dialog>
+            </v-toolbar>
+        </template>
+        <template v-slot:item.actions="{ item }">
+            <v-icon small class="mr-2" @click="editItem(item)">
+                mdi-pencil
+            </v-icon>
+            <v-icon small @click="deleteItem(item)">
+                mdi-delete
+            </v-icon>
+        </template>
+        <template v-slot:no-data>
+            <v-btn color="primary" @click="initialize">
+                Reset
+            </v-btn>
+        </template>
+    </v-data-table>
+</v-container>
+</template>
+
+<script>
+export default {
+
+    data: () => ({
+        dialog: false,
+        dialogDelete: false,
+        headers: [{
+                text: 'Word1',
+                align: 'start',
+                sortable: false,
+                value: 'word_origin.name',
+            },
+            {
+                text: 'Lang1',
+                value: 'word_origin.language.name'
+            },
+            {
+                text: 'Word2',
+                value: 'word_translation.name'
+            },
+            {
+                text: 'Lang2',
+                value: 'word_translation.language.name'
+            },
+            {
+                text: 'Actions',
+                value: 'actions',
+                sortable: false
+            },
+        ],
+        words: [],
+        editedIndex: -1,
+        editedItem: {
+            id: 0,
+            word_origin: {
+                id: 0,
+                name: "",
+                language: {
+                    id: 0,
+                    name: ""
+                }
+            },
+            word_translation: {
+                id: 0,
+                name: "",
+                language: {
+                    id: 0,
+                    name: ""
+                }
+            }
+        },
+        defaultItem: {
+            id: 0,
+            word_origin: {
+                id: 0,
+                name: "",
+                language: {
+                    id: 0,
+                    name: ""
+                }
+            },
+            word_translation: {
+                id: 0,
+                name: "",
+                language: {
+                    id: 0,
+                    name: ""
+                }
+            }
+        },
+        languages: []
+    }),
+
+    computed: {
+        formTitle() {
+            return this.editedIndex === -1 ? 'New Item' : 'Edit Item'
+        },
+    },
+
+    watch: {
+        dialog(val) {
+            val || this.close()
+        },
+        dialogDelete(val) {
+            val || this.closeDelete()
+        },
+    },
+
+    created() {
+        this.initialize()
+    },
+
+    methods: {
+
+        deleteTranslation(item){
+          axios.delete('/api/v1/translations/'+item.id)
+        },
+        saveTranslation(item) {
+            let requestOne = axios({
+                method: item.word_origin.id > 0 ? 'put' : 'post',
+                url: '/api/v1/words' + (item.word_origin.id > 0 ? '/' + item.word_origin.id : ''),
+                data: {
+                    name: item.word_origin.name,
+                    language_id: item.word_origin.language.id,
+                }
+            })
+
+            let requestTwo = axios({
+                method: item.word_translation.id > 0 ? 'put' : 'post',
+                url: '/api/v1/words' + (item.word_translation.id > 0 ? '/' + item.word_translation.id : ''),
+                data: {
+                    name: item.word_translation.name,
+                    language_id: item.word_translation.language.id,
+                }
+            })
+
+            axios.all([requestOne, requestTwo])
+                .then(axios.spread((...responses) => {
+                    item.word_origin = responses[0].data.data
+                    item.word_translation = responses[1].data.data
+
+                    if (this.editedIndex > -1) {
+                        Object.assign(this.words[this.editedIndex], item)
+                    } else if (item.id == 0) {
+                        axios.post(`/api/v1/translations`, {
+                                word_origin_id: item.word_origin.id,
+                                word_translation_id: item.word_translation.id,
+                            })
+                            .then(response => {
+                                item = response.data.data
+                                this.words.push(item)
+                            })
+                    }
+
+                })).catch(errors => {
+                    console.log(errors);
+                })
+        },
+        saveWords(item) {
+            // axios({
+            //         method: item.word_origin.id > 0 ? 'put' : 'post',
+            //         url: '/api/v1/words' + (item.word_origin.id > 0 ? '/'+item.word_origin.id : ''),
+            //         data: {
+            //             name: item.word_origin.name,
+            //             language_id: item.word_origin.language.id,
+            //         }
+            //     })
+            //     .then(function (response) {
+            //         item.word_origin = response.data.data;
+            //     });
+
+            // axios({
+            //         method: item.word_translation.id > 0 ? 'put' : 'post',
+            //         url: '/api/v1/words' + (item.word_translation.id > 0 ? '/'+item.word_translation.id : ''),
+            //         data: {
+            //             name: item.word_translation.name,
+            //             language_id: item.word_translation.language.id,
+            //         }
+            //     })
+            //     .then(function (response) {
+            //         item.word_translation = response.data.data;
+            //     });
+
+        },
+        initialize() {
+
+            axios.get('/api/v1/translations')
+                .then((response) => {
+                    this.words = response.data.data
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
+
+            axios.get('/api/v1/languages')
+                .then((response) => {
+                    this.languages = response.data.data
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
+
+        },
+
+        editItem(item) {
+            this.editedIndex = this.words.indexOf(item)
+            this.editedItem = Object.assign({}, item)
+            this.dialog = true
+            console.log(item);
+        },
+
+        deleteItem(item) {
+            this.editedIndex = this.words.indexOf(item)
+            this.editedItem = Object.assign({}, item)
+            this.dialogDelete = true
+        },
+
+        deleteItemConfirm() {
+            this.deleteTranslation(this.editedItem)
+            this.words.splice(this.editedIndex, 1)
+            this.closeDelete()
+        },
+
+        close() {
+            this.dialog = false
+            this.$nextTick(() => {
+                this.editedItem = Object.assign({}, this.defaultItem)
+                this.editedIndex = -1
+            })
+        },
+
+        closeDelete() {
+            this.dialogDelete = false
+            this.$nextTick(() => {
+                this.editedItem = Object.assign({}, this.defaultItem)
+                this.editedIndex = -1
+            })
+        },
+
+        save() {
+            // this.saveWords(this.editedItem)
+
+            if (this.editedIndex > -1) {
+                Object.assign(this.words[this.editedIndex], this.editedItem)
+            } else {
+                // this.words.push(this.editedItem)
+                this.saveTranslation(this.editedItem)
+            }
+            this.close()
+        },
+    },
+}
+</script>

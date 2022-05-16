@@ -1,0 +1,482 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Word trainer Documentation",
+        "description": "Word trainer Documentation",
+        "contact": {
+            "email": "denis.grin1618@gmail.com"
+        },
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://localhost/api",
+            "description": "API Server"
+        }
+    ],
+    "paths": {
+        "/v1/languages": {
+            "get": {
+                "tags": [
+                    "Languages"
+                ],
+                "summary": "list of languages",
+                "operationId": "fc8738a01ca9ab28a5ca0f4457723c64",
+                "responses": {
+                    "200": {
+                        "description": "A list with languages"
+                    },
+                    "default": {
+                        "description": "an \"unexpected\" error"
+                    }
+                }
+            }
+        },
+        "/v1/translations": {
+            "get": {
+                "tags": [
+                    "Translations"
+                ],
+                "summary": "list of translations",
+                "operationId": "ddcbb4aa45d02542db52715cf2caab99",
+                "responses": {
+                    "200": {
+                        "description": "A list with translations"
+                    },
+                    "default": {
+                        "description": "an \"unexpected\" error"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Translations"
+                ],
+                "summary": "Store new translation",
+                "description": "Returns translation data",
+                "operationId": "storeTranslation",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/TranslationPostRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TranslationResource"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/translations/{id}": {
+            "get": {
+                "tags": [
+                    "Translations"
+                ],
+                "summary": "Get translation information",
+                "description": "Returns translation",
+                "operationId": "getTranslationById",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Translation id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TranslationResource"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Translations"
+                ],
+                "summary": "Update existing translation",
+                "description": "Returns updated translation data",
+                "operationId": "updateTranslation",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "translation id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/TranslationPostRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "202": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TranslationResource"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Translations"
+                ],
+                "summary": "Delete existing translation",
+                "description": "Deletes a record and returns no content",
+                "operationId": "deleteTranslation",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Translation id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/words": {
+            "get": {
+                "tags": [
+                    "Words"
+                ],
+                "summary": "list of words",
+                "operationId": "8451b3a53640f2ac48b59f05750047cd",
+                "responses": {
+                    "200": {
+                        "description": "A list with words"
+                    },
+                    "default": {
+                        "description": "an \"unexpected\" error"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Words"
+                ],
+                "summary": "Store new word",
+                "description": "Returns word data",
+                "operationId": "storeWord",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/WordPostRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/WordResource"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/words/{id}": {
+            "get": {
+                "tags": [
+                    "Words"
+                ],
+                "summary": "Get word information",
+                "description": "Returns project word",
+                "operationId": "getWordById",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Word id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/WordResource"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Words"
+                ],
+                "summary": "Update existing word",
+                "description": "Returns updated word data",
+                "operationId": "updateWord",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "word id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/WordPostRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "202": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/WordResource"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Words"
+                ],
+                "summary": "Delete existing word",
+                "description": "Deletes a record and returns no content",
+                "operationId": "deleteWord",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Word id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "TranslationPostRequest": {
+                "title": "Store Translation request",
+                "description": "Store Translation request body data",
+                "required": [
+                    "word_origin_id",
+                    "word_translation_id"
+                ],
+                "properties": {
+                    "word_origin_id": {
+                        "example": "1"
+                    },
+                    "word_translation_id": {
+                        "example": "1"
+                    }
+                },
+                "type": "object"
+            },
+            "WordPostRequest": {
+                "title": "Store Word request",
+                "description": "Store Word request body data",
+                "required": [
+                    "name",
+                    "language_id"
+                ],
+                "properties": {
+                    "name": {
+                        "example": "A nice word"
+                    },
+                    "language_id": {
+                        "example": "1"
+                    }
+                },
+                "type": "object"
+            },
+            "LanguageResource": {
+                "title": "LanguageResource",
+                "description": "Language resource",
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "name": {
+                        "type": "string"
+                    }
+                },
+                "type": "object",
+                "xml": {
+                    "name": "LanguageResource"
+                }
+            },
+            "TranslationResource": {
+                "title": "TranslationResource",
+                "description": "Translation resource",
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "word_origin": {
+                        "$ref": "#/components/schemas/WordResource"
+                    },
+                    "word_translation": {
+                        "$ref": "#/components/schemas/WordResource"
+                    }
+                },
+                "type": "object",
+                "xml": {
+                    "name": "TranslationResource"
+                }
+            },
+            "WordResource": {
+                "title": "WordResource",
+                "description": "Word resource",
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "language": {
+                        "$ref": "#/components/schemas/LanguageResource"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date"
+                    }
+                },
+                "type": "object",
+                "xml": {
+                    "name": "WordResource"
+                }
+            },
+            "Word": {
+                "title": "Word",
+                "description": "Word model",
+                "properties": {
+                    "name": {
+                        "type": "string"
+                    },
+                    "language_id": {
+                        "type": "integer"
+                    }
+                },
+                "type": "object",
+                "xml": {
+                    "name": "Word"
+                }
+            }
+        },
+        "securitySchemes": {
+            "sanctum": {
+                "type": "apiKey",
+                "description": "Enter token in format (Bearer <token>)",
+                "name": "Authorization",
+                "in": "header"
+            }
+        }
+    },
+    "security": [
+        {
+            "sanctum": []
+        }
+    ],
+    "tags": [
+        {
+            "name": "Languages"
+        },
+        {
+            "name": "Translations"
+        },
+        {
+            "name": "Words"
+        }
+    ]
+}

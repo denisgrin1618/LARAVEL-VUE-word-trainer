@@ -3,6 +3,10 @@ import VueRouter from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import SignInView from '../views/SignInView.vue'
 import SignUpView from '../views/SignUpView.vue'
+import WordsView from '../views/WordsView.vue'
+import StatisticsView from '../views/StatisticsView.vue'
+import QuizView from '../views/QuizView.vue'
+import { useUserStore } from "../store/user";
 
 Vue.use(VueRouter)
 
@@ -23,12 +27,19 @@ const routes = [
     component: SignUpView
   },
   {
-    path: '/about',
-    name: 'about',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/AboutView.vue')
+    path: '/words',
+    name: 'words',
+    component: WordsView
+  },
+  {
+    path: '/statistics',
+    name: 'statistics',
+    component: StatisticsView
+  },
+  {
+    path: '/quiz',
+    name: 'quiz',
+    component: QuizView
   }
 ]
 
@@ -36,6 +47,15 @@ const router = new VueRouter({
   mode: 'history',
   base: process.env.BASE_URL,
   routes
+})
+
+router.beforeEach((to, from, next) => {
+  const userStore = useUserStore()
+  if (userStore.isAuthenticated || to.name === 'signin' || to.name === 'signup') {
+    next();
+  } else {
+    next('/signin');
+  }
 })
 
 export default router

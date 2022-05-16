@@ -4,102 +4,168 @@ namespace App\Http\Controllers\API;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller as Controller;
+use App\Http\Requests\WordPostRequest;
 use App\Http\Resources\WordResource;
 use App\Models\Word;
-use Illuminate\Support\Facades\Validator;
+use App\Repositories\WordRepositoryInterface;
+use Illuminate\Http\Response;
 
+/**
+ * @OA\Tag(name="Words")
+ */
 class WordController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        $words = Word::all();
-    
-        return $this->sendResponse(WordResource::collection($words), 'Words retrieved successfully.');
-    
+
+    private $wordRepository;
+
+    public function __construct(WordRepositoryInterface $wordRepository) {
+        $this->wordRepository = $wordRepository;
     }
 
     /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @OA\Get(
+     *   path="/v1/words",
+     *   summary="list of words",
+     *   tags={"Words"},
+     *   @OA\Response(
+     *     response=200,
+     *     description="A list with words"
+     *   ),
+     *   @OA\Response(
+     *     response="default",
+     *     description="an ""unexpected"" error"
+     *   )
+     * )
      */
-    public function store(Request $request)
+    public function index(Request $request)
     {
-        $input = $request->all();
-   
-        $validator = Validator::make($input, [
-            'name' => 'required',
-            'language_id' => 'required|exists:languages,id'
-        ]);
-   
-        if($validator->fails()){
-            return $this->sendError('Validation Error.', $validator->errors());       
-        }
-   
-        $word = Word::create($input);
-   
-        return $this->sendResponse(new WordResource($word), 'Word created successfully.');
+        $words = $this->wordRepository->all();
     
+        return WordResource::collection($words); 
     }
 
     /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @OA\Post(
+     *      path="/v1/words",
+     *      operationId="storeWord",
+     *      summary="Store new word",
+     *      tags={"Words"},
+     *      description="Returns word data",
+     *      @OA\RequestBody(
+     *          required=true,
+     *          @OA\JsonContent(ref="#/components/schemas/WordPostRequest")
+     *      ),
+     *      @OA\Response(
+     *          response=201,
+     *          description="Successful operation",
+     *          @OA\JsonContent(ref="#/components/schemas/WordResource")
+     *       )
+     * )
+     */
+    public function store(WordPostRequest $request)
+    {
+        $word = $this->wordRepository->create($request->validated());
+   
+        return (new WordResource($word))
+            ->response()
+            ->setStatusCode(Response::HTTP_CREATED);
+    }
+
+    /**
+     * @OA\Get(
+     *      path="/v1/words/{id}",
+     *      operationId="getWordById",
+     *      tags={"Words"},
+     *      summary="Get word information",
+     *      description="Returns project word",
+     *      @OA\Parameter(
+     *          name="id",
+     *          description="Word id",
+     *          required=true,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="integer"
+     *          )
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *          @OA\JsonContent(ref="#/components/schemas/WordResource")
+     *       ),
+     *      @OA\Response(
+     *          response=400,
+     *          description="Bad Request"
+     *      )
+     * )
      */
     public function show(Word $word)
     {
-        if (is_null($word)) {
-            return $this->sendError('Product not found.');
-        }
-   
-        return $this->sendResponse(new WordResource($word), 'Word retrieved successfully.');
-   
+        return new WordResource($word);
     }
 
     /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @OA\Put(
+     *      path="/v1/words/{id}",
+     *      operationId="updateWord",
+     *      tags={"Words"},
+     *      summary="Update existing word",
+     *      description="Returns updated word data",
+     *      @OA\Parameter(
+     *          name="id",
+     *          description="word id",
+     *          required=true,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="integer"
+     *          )
+     *      ),
+     *      @OA\RequestBody(
+     *          required=true,
+     *          @OA\JsonContent(ref="#/components/schemas/WordPostRequest")
+     *      ),
+     *      @OA\Response(
+     *          response=202,
+     *          description="Successful operation",
+     *          @OA\JsonContent(ref="#/components/schemas/WordResource")
+     *       )
+     * )
      */
-    public function update(Request $request, Word $word)
+    public function update(WordPostRequest $request, $id)
     {
-        $input = $request->all();
+        $word = $this->wordRepository->update($id, $request->validated());
    
-        $validator = Validator::make($input, [
-            'name' => 'required',
-            'language_id' => 'required|exists:languages,id'
-        ]);
-   
-        if($validator->fails()){
-            return $this->sendError('Validation Error.', $validator->errors());       
-        }
-   
-        $word->update($input);
-   
-        return $this->sendResponse(new WordResource($word), 'Word updated successfully.');
-    
+        return (new WordResource($word))
+            ->response()
+            ->setStatusCode(Response::HTTP_ACCEPTED);
     }
 
     /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @OA\Delete(
+     *      path="/v1/words/{id}",
+     *      operationId="deleteWord",
+     *      tags={"Words"},
+     *      summary="Delete existing word",
+     *      description="Deletes a record and returns no content",
+     *      @OA\Parameter(
+     *          name="id",
+     *          description="Word id",
+     *          required=true,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="integer"
+     *          )
+     *      ),
+     *      @OA\Response(
+     *          response=204,
+     *          description="Successful operation",
+     *          @OA\JsonContent()
+     *       )
+     * )
      */
-    public function destroy( Word $word)
+    public function destroy(Word $word)
     {
         $word->delete();
-   
-        return $this->sendResponse([], 'Word deleted successfully.');
+
+        return response(null, Response::HTTP_NO_CONTENT);
     }
 }

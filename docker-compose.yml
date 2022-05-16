@@ -45,6 +45,18 @@ services:
             retries: 3
             timeout: 5s
 
+    adminer:
+        image: 'adminer:latest'
+        ports:
+            - 8003:8080
+        environment:
+            MYSQL_USERNAME: "${DB_USERNAME}"
+            MYSQL_ROOT_PASSWORD: "${DB_PASSWORD}"
+            PMA_HOST: mysql
+        depends_on:
+            - mysql
+        networks:
+            - wordback
 
     phpmyadmin:
         image: phpmyadmin/phpmyadmin
