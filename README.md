@@ -1,6 +1,6 @@
 
 # Laravel Word Trainer
-
+![Word trainer](/public/images/logo.png?raw=true "Word trainer")
 
 ## Prepare environment
 In file ~/.bashrc add strings:
