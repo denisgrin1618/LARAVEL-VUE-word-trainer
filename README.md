@@ -20,6 +20,10 @@ export PATH="$HOME/.config/composer/vendor/bin:$PATH"
 - Regenerate documentation with `sail artisan l5-swagger:generate` command
 - Regenerate front with `sail npm i && sail npm run watch` command
 
+## Dev Links
+- http://localhost
+- http://localhost/api/documentation
+
 ## AWS Beanstalk ssh
 ```bash
 $ ssh -i ~/.ssh/word-trainer-bean-key.pem ec2-user@3.21.103.65
