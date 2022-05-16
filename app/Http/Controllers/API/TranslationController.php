@@ -20,6 +20,7 @@ class TranslationController extends Controller
 
     public function __construct(TranslationRepositoryInterface $repo) {
         $this->repo = $repo;
+        $this->authorizeResource(Translation::class, 'translation');
     }
 
     /**

@@ -18,6 +18,7 @@ class TranslationSeeder extends Seeder
     public function run()
     {
         $user = User::factory()
+        ->unverified()
         ->create([
             'email'=>'test@mail.com',
             'password' => Hash::make('password')

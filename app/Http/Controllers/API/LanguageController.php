@@ -12,6 +12,11 @@ use App\Models\Language;
  */
 class LanguageController extends Controller
 {
+
+    public function __construct() {
+        $this->authorizeResource(Language::class, 'language');
+    }
+
     /**
      * @OA\Get(
      *   path="/v1/languages",
