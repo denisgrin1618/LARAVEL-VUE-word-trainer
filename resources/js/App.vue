@@ -24,10 +24,10 @@
 
             <v-spacer></v-spacer>
 
+            <v-tab class="black--text" to="/">Home</v-tab>
             <v-tab class="black--text" to="/words">Words</v-tab>
-            <v-tab class="black--text">Tab 2</v-tab>
-            <v-tab class="black--text">Tab 3</v-tab>
-            <v-tab class="black--text">Tab 4</v-tab>
+            <v-tab class="black--text" to="/statistics">Statistics</v-tab>
+            <v-tab class="black--text" to="/quiz">Quiz</v-tab>
 
             <v-spacer></v-spacer>
 
@@ -40,18 +40,6 @@
                 <v-icon color="black">mdi-fingerprint</v-icon>
             </v-tab>
         </v-tabs>
-
-        <!-- <v-btn text color="black" to="/signin" v-if="!this.isAuthenticated">
-            <span class="mr-2">Sign in</span>
-            <v-icon>mdi-lock-open</v-icon>
-        </v-btn>
-
-        <v-btn text color="black" to="/signup" v-if="!this.isAuthenticated">
-            <span class="mr-2">Sign up</span>
-            <v-icon>mdi-fingerprint</v-icon>
-        </v-btn> -->
-
-        <!-- <span class="mr-2 black--text" v-if="this.isAuthenticated">{{this.user.name}}</span> -->
 
         <v-btn text color="black" @click="logout" v-if="this.isAuthenticated">
             <span class="mr-2">Logout</span>
@@ -68,6 +56,27 @@
                         <v-icon>mdi-home</v-icon>
                     </v-list-item-icon>
                     <v-list-item-title>Home</v-list-item-title>
+                </v-list-item>
+
+                <v-list-item to="/words">
+                    <v-list-item-icon>
+                        <v-icon>mdi-alpha-a-box-outline</v-icon>
+                    </v-list-item-icon>
+                    <v-list-item-title>Words</v-list-item-title>
+                </v-list-item>
+
+                <v-list-item to="/statistics">
+                    <v-list-item-icon>
+                        <v-icon>mdi-book</v-icon>
+                    </v-list-item-icon>
+                    <v-list-item-title>Statistics</v-list-item-title>
+                </v-list-item>
+
+                <v-list-item to="/quiz">
+                    <v-list-item-icon>
+                        <v-icon>mdi-account-check</v-icon>
+                    </v-list-item-icon>
+                    <v-list-item-title>Quiz</v-list-item-title>
                 </v-list-item>
 
                 <v-list-item to="/signin" v-if="!this.isAuthenticated">
@@ -103,8 +112,12 @@
 
 <script>
 import Alert from './components/Alert.vue'
-import { mapWritableState } from 'pinia'
-import { useUserStore } from "./store/user";
+import {
+    mapWritableState
+} from 'pinia'
+import {
+    useUserStore
+} from "./store/user";
 
 export default {
     name: 'App',
@@ -125,13 +138,13 @@ export default {
         }
     },
     methods: {
-        readCookie(){
-            if (this.$cookies.isKey('apitoken')){
+        readCookie() {
+            if (this.$cookies.isKey('apitoken')) {
                 this.isAuthenticated = true
                 this.user.name = this.$cookies.get('username')
                 this.user.token = this.$cookies.get('apitoken')
                 this.$router.push('/');
-            }           
+            }
         },
         detectScreenChange() {
             this.mobile = window.innerWidth < 560;

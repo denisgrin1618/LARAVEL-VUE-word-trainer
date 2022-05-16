@@ -4,6 +4,8 @@ import HomeView from '../views/HomeView.vue'
 import SignInView from '../views/SignInView.vue'
 import SignUpView from '../views/SignUpView.vue'
 import WordsView from '../views/WordsView.vue'
+import StatisticsView from '../views/StatisticsView.vue'
+import QuizView from '../views/QuizView.vue'
 import { useUserStore } from "../store/user";
 
 Vue.use(VueRouter)
@@ -28,6 +30,16 @@ const routes = [
     path: '/words',
     name: 'words',
     component: WordsView
+  },
+  {
+    path: '/statistics',
+    name: 'statistics',
+    component: StatisticsView
+  },
+  {
+    path: '/quiz',
+    name: 'quiz',
+    component: QuizView
   }
 ]
 
