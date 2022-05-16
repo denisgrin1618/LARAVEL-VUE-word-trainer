@@ -21,8 +21,19 @@ export PATH="$HOME/.config/composer/vendor/bin:$PATH"
 - Regenerate front with `sail npm i && sail npm run watch` command
 
 ## Dev Links
-- http://localhost
-- http://localhost/api/documentation
+- http://localhost [Front]
+```properties
+login: test@mail.com
+password: password
+```
+- http://localhost:8003 [Adminer]
+```properties
+server: mysql
+user: sail
+password: password
+```
+- http://localhost/api/documentation [Doc]
+
 
 ## AWS Beanstalk ssh
 ```bash
