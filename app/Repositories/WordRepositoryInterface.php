@@ -2,6 +2,8 @@
 
 namespace App\Repositories;
 
+use App\Models\Word;
+
 interface WordRepositoryInterface {
 
     public function all();
@@ -10,8 +12,8 @@ interface WordRepositoryInterface {
 
     public function create($input);
 
-    public function update($wordId, $input);
+    public function update(Word $word, $input);
 
-    public function destroy($wordId);
+    public function destroy(Word $word);
     
 }

@@ -3044,14 +3044,12 @@ __webpack_require__.r(__webpack_exports__);
       });
     },
     save: function save() {
-      // this.saveWords(this.editedItem)
-      if (this.editedIndex > -1) {
-        Object.assign(this.words[this.editedIndex], this.editedItem);
-      } else {
-        // this.words.push(this.editedItem)
-        this.saveTranslation(this.editedItem);
-      }
-
+      // if (this.editedIndex > -1) {
+      //     Object.assign(this.words[this.editedIndex], this.editedItem)
+      // } else {
+      //     this.words.push(this.editedItem)
+      // }
+      this.saveTranslation(this.editedItem);
       this.close();
     },
     filterText: function filterText(value, search, item) {

@@ -41,7 +41,7 @@ class TranslationPolicy
      */
     public function create(User $user)
     {
-        //
+        return true;
     }
 
     /**

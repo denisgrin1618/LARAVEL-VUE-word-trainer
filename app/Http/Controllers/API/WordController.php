@@ -20,7 +20,7 @@ class WordController extends Controller
 
     public function __construct(WordRepositoryInterface $repo) {
         $this->repo = $repo;
-        $this->authorizeResource(Word::class, 'word');
+        // $this->authorizeResource(Word::class, 'word');
     }
 
     /**
@@ -131,9 +131,10 @@ class WordController extends Controller
      *       )
      * )
      */
-    public function update(WordPostRequest $request, $id)
+    public function update(WordPostRequest $request, Word $word)
     {
-        $word = $this->repo->update($id, $request->validated());
+        $this->authorize('update', $word);
+        $word = $this->repo->update($word, $request->validated());
    
         return (new WordResource($word))
             ->response()
@@ -165,7 +166,7 @@ class WordController extends Controller
      */
     public function destroy(Word $word)
     {
-        $word->delete();
+        $word = $this->repo->destroy($word);
 
         return response(null, Response::HTTP_NO_CONTENT);
     }
