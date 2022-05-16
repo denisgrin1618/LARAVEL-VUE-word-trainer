@@ -16,9 +16,9 @@ export PATH="$HOME/.config/composer/vendor/bin:$PATH"
 - Run `sail up --build -d`
 - Run `sail composer install`
 - Run `sail artisan key:generate`
-- Run `sail artisan migrate --seed` (it has some seeded data for your testing)
-- Regenerate documentation with `sail artisan l5-swagger:generate` command
-- Regenerate front with `sail npm i && sail npm run watch` command
+- Run `sail artisan migrate --seed`
+- Run `sail artisan l5-swagger:generate` (Regenerate documentation)
+- Run `sail npm i && sail npm run watch` (Regenerate front)
 
 ## Dev Links
 - http://localhost [Front]
