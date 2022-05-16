@@ -2748,7 +2748,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       name: '',
       email: '',
       password: '',
-      c_password: ''
+      password_confirmation: ''
     };
   },
   computed: _objectSpread({}, (0,pinia__WEBPACK_IMPORTED_MODULE_1__.mapWritableState)(_store_user__WEBPACK_IMPORTED_MODULE_0__.useUserStore, ['user', 'isAuthenticated'])),
@@ -2763,7 +2763,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         name: this.name,
         email: this.email,
         password: this.password,
-        c_password: this.c_password
+        password_confirmation: this.password_confirmation
       }).then(function (response) {
         that.user.token = response.data.data.token;
         that.user.name = response.data.data.name;
@@ -3281,7 +3281,7 @@ var router = new vue_router__WEBPACK_IMPORTED_MODULE_8__["default"]({
 router.beforeEach(function (to, from, next) {
   var userStore = (0,_store_user__WEBPACK_IMPORTED_MODULE_6__.useUserStore)();
 
-  if (userStore.isAuthenticated || to.name === 'signin') {
+  if (userStore.isAuthenticated || to.name === 'signin' || to.name === 'signup') {
     next();
   } else {
     next('/signin');
@@ -24995,9 +24995,7 @@ var render = function () {
             ]),
             _vm._v(" "),
             _c("p", [
-              _vm._v(
-                "This site will help you learn foreign languages by repeating difficult words"
-              ),
+              _vm._v("This site will help you learn foreign languages"),
             ]),
           ]),
         ],
@@ -25294,11 +25292,11 @@ var render = function () {
                               required: "",
                             },
                             model: {
-                              value: _vm.c_password,
+                              value: _vm.password_confirmation,
                               callback: function ($$v) {
-                                _vm.c_password = $$v
+                                _vm.password_confirmation = $$v
                               },
-                              expression: "c_password",
+                              expression: "password_confirmation",
                             },
                           }),
                         ],

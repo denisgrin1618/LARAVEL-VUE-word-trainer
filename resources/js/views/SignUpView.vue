@@ -44,7 +44,7 @@
                 id="confirmPassword"
                 type="password"
                 required
-                v-model="c_password"
+                v-model="password_confirmation"
                 ></v-text-field>
             </v-flex>
             <v-flex class="text-xs-center" mt-5>
@@ -69,7 +69,7 @@ export default {
         name: '',
         email: '',
         password: '',
-        c_password: ''
+        password_confirmation: ''
       };
     },
 
@@ -90,7 +90,7 @@ export default {
           name: this.name,
           email: this.email,
           password: this.password,
-          c_password: this.c_password
+          password_confirmation: this.password_confirmation
         })
         .then(function (response) {
           that.user.token = response.data.data.token;

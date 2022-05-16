@@ -51,7 +51,7 @@ const router = new VueRouter({
 
 router.beforeEach((to, from, next) => {
   const userStore = useUserStore()
-  if (userStore.isAuthenticated || to.name === 'signin') {
+  if (userStore.isAuthenticated || to.name === 'signin' || to.name === 'signup') {
     next();
   } else {
     next('/signin');
