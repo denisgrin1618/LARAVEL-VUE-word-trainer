@@ -15,6 +15,23 @@
         }
     ],
     "paths": {
+        "/v1/languages": {
+            "get": {
+                "tags": [
+                    "Languages"
+                ],
+                "summary": "list of languages",
+                "operationId": "fc8738a01ca9ab28a5ca0f4457723c64",
+                "responses": {
+                    "200": {
+                        "description": "A list with languages"
+                    },
+                    "default": {
+                        "description": "an \"unexpected\" error"
+                    }
+                }
+            }
+        },
         "/v1/translations": {
             "get": {
                 "tags": [
@@ -358,6 +375,22 @@
                 },
                 "type": "object"
             },
+            "LanguageResource": {
+                "title": "LanguageResource",
+                "description": "Language resource",
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "name": {
+                        "type": "string"
+                    }
+                },
+                "type": "object",
+                "xml": {
+                    "name": "LanguageResource"
+                }
+            },
             "TranslationResource": {
                 "title": "TranslationResource",
                 "description": "Translation resource",
@@ -387,8 +420,8 @@
                     "name": {
                         "type": "string"
                     },
-                    "language_id": {
-                        "type": "integer"
+                    "language": {
+                        "$ref": "#/components/schemas/LanguageResource"
                     },
                     "created_at": {
                         "type": "string",
@@ -436,6 +469,9 @@
         }
     ],
     "tags": [
+        {
+            "name": "Languages"
+        },
         {
             "name": "Translations"
         },

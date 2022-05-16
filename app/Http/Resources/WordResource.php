@@ -23,7 +23,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *     @OA\Property(
  *          property="language",
  *          ref="#/components/schemas/LanguageResource"
- *     )
+ *     ),
  *     @OA\Property(
  *          property="created_at",
  *          type="date"

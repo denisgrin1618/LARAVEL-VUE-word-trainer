@@ -24,16 +24,20 @@
 </template>
 
 <script>
-import { mapWritableState } from 'pinia'
-import { useUserStore } from "../store/user";
+import {
+    mapWritableState
+} from 'pinia'
+import {
+    useUserStore
+} from "../store/user";
 
 export default {
 
-    data: function() {
-      return {
-        email: '',
-        password: ''
-      };
+    data: function () {
+        return {
+            email: '',
+            password: ''
+        };
     },
 
     computed: {
@@ -42,26 +46,26 @@ export default {
 
     methods: {
 
-      formSubmit(e) {
-        e.preventDefault();
+        formSubmit(e) {
+            e.preventDefault();
 
-        axios.post('/api/login', {
-          email: this.email,
-          password: this.password
-        })
-        .then((response) => {
-            this.user.token = response.data.data.token;
-            this.user.name = response.data.data.name;
-            this.isAuthenticated = true;
-            this.$cookies.set('apitoken', this.user.token)
-            this.$cookies.set('username', this.user.name)
-            axios.defaults.headers.common['Authorization'] = `Bearer ${this.user.token}`;
-            this.$router.push('/') 
-        })
-        .catch(function (error) {
-            console.log(error);
-        });
-      }
+            axios.post('/api/login', {
+                    email: this.email,
+                    password: this.password
+                })
+                .then((response) => {
+                    this.user.token = response.data.data.token;
+                    this.user.name = response.data.data.name;
+                    this.isAuthenticated = true;
+                    this.$cookies.set('apitoken', this.user.token)
+                    this.$cookies.set('username', this.user.name)
+                    axios.defaults.headers.common['Authorization'] = `Bearer ${this.user.token}`;
+                    this.$router.push('/')
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
+        }
 
     }
 
