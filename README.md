@@ -12,13 +12,13 @@ export PATH="$HOME/.config/composer/vendor/bin:$PATH"
 ## How to use
 
 - Clone the repository with __git clone__
-- Copy __.env.example__ file to __.env__ and edit database credentials there
+- Copy __.env.dev__ file to __.env__ and edit database credentials there
 - Run `sail up -d`
 - Run `sail composer install`
 - Run `sail artisan key:generate`
 - Run `sail artisan migrate --seed` (it has some seeded data for your testing)
 - Regenerate documentation with `sail artisan l5-swagger:generate` command
-- Regenerate front with `npm i && npm run watch` command
+- Regenerate front with `sail npm i && sail npm run watch` command
 
 ## AWS Beanstalk ssh
 ```bash
