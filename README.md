@@ -95,24 +95,3 @@ $ ssh -i ~/.ssh/word-trainer-bean-key.pem ec2-user@3.21.103.65
 ```properties
 XDEBUG_SESSION_START=PHPSTORM
 ```
-
-## AWS
-
-1. install aws cli
-
-```bash
-$ curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-$ unzip awscliv2.zip
-$ sudo ./aws/install
-```
-
-2. aws cli config
-
-```bash
-$ aws configure
-AWS Access Key ID [None]: env(AWS_ACCESS_KEY_ID)
-AWS Secret Access Key [None]: env(AWS_SECRET_ACCESS_KEY)
-Default region name [None]: env(AWS_DEFAULT_REGION)
-Default output format [None]: json
-
-```
