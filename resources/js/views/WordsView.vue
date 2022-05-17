@@ -1,11 +1,11 @@
 <template>
 <v-container>
 
-    <v-data-table :headers="headers" :items="words" :languages="languages" sort-by="calories" class="elevation-1" :items-per-page="5">
+    <v-data-table :headers="headers" :items="words" :languages="languages" sort-by="calories" class="elevation-1" :items-per-page="8" :search="search" :custom-filter="filterText">
         <template v-slot:top>
             <v-toolbar flat>
-                <!-- <v-toolbar-title>My CRUD</v-toolbar-title> -->
-                <v-divider class="mx-4" inset vertical></v-divider>
+                <v-text-field v-model="search" label="Search" class="mt-4"></v-text-field>
+                <!-- <v-divider class="mx-4" inset vertical></v-divider> -->
                 <v-spacer></v-spacer>
                 <v-dialog v-model="dialog" max-width="500px">
                     <template v-slot:activator="{ on, attrs }">
@@ -84,6 +84,7 @@ export default {
 
     data: () => ({
         dialog: false,
+        search: '',
         dialogDelete: false,
         headers: [{
                 text: 'Word1',
@@ -173,9 +174,10 @@ export default {
 
     methods: {
 
-        deleteTranslation(item){
-          axios.delete('/api/v1/translations/'+item.id)
+        deleteTranslation(item) {
+            axios.delete('/api/v1/translations/' + item.id)
         },
+
         saveTranslation(item) {
             let requestOne = axios({
                 method: item.word_origin.id > 0 ? 'put' : 'post',
@@ -217,6 +219,7 @@ export default {
                     console.log(errors);
                 })
         },
+
         saveWords(item) {
             // axios({
             //         method: item.word_origin.id > 0 ? 'put' : 'post',
@@ -243,6 +246,7 @@ export default {
             //     });
 
         },
+
         initialize() {
 
             axios.get('/api/v1/translations')
@@ -299,15 +303,20 @@ export default {
         },
 
         save() {
-            // this.saveWords(this.editedItem)
-
-            if (this.editedIndex > -1) {
-                Object.assign(this.words[this.editedIndex], this.editedItem)
-            } else {
-                // this.words.push(this.editedItem)
-                this.saveTranslation(this.editedItem)
-            }
+            // if (this.editedIndex > -1) {
+            //     Object.assign(this.words[this.editedIndex], this.editedItem)
+            // } else {
+            //     this.words.push(this.editedItem)
+            // }
+            this.saveTranslation(this.editedItem)
             this.close()
+        },
+
+        filterText(value, search, item) {
+            return value != null &&
+                search != null &&
+                typeof value === 'string' &&
+                value.toString().indexOf(search) !== -1
         },
     },
 }

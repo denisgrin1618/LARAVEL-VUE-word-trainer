@@ -16,7 +16,7 @@ class WordObserver
      * @return void
      */
     public function creating(Word $word) {
-        $word->user_id = Auth::user()->id;
+        $word->user_id = $word->user_id ?? Auth::user()->id;
     }
 
 

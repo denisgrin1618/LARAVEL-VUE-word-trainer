@@ -14,6 +14,6 @@ class TranslationObserver
      * @return void
      */
     public function creating(Translation $translation) {
-        $translation->user_id = Auth::user()->id;
+        $translation->user_id = $translation->user_id ?? Auth::user()->id;
     }
 }

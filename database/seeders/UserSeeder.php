@@ -2,10 +2,10 @@
 
 namespace Database\Seeders;
 
-use App\Models\Language;
+use App\Models\User;
 use Illuminate\Database\Seeder;
 
-class LanguageSeeder extends Seeder
+class UserSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -14,7 +14,6 @@ class LanguageSeeder extends Seeder
      */
     public function run()
     {
-        Language::create(['name' => "ru"]);
-        Language::create(['name' => "en"]);
+        User::factory()->create();
     }
 }

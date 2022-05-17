@@ -29,22 +29,14 @@ class WordRepository implements WordRepositoryInterface {
         return $word ?? Word::create($input);
     }
 
-    public function update($wordId, $input)
+    public function update(Word $word, $input)
     {
-        $word = Word::whereCurrentUser()
-                ->where('id', $wordId)
-                ->firstOrFail();
-
         $word->update($input);
 
         return $word;
     }
 
-    public function destroy($wordId){
-
-        $word = Word::whereCurrentUser()
-            ->where('id', $wordId)
-            ->firstOrFail();
+    public function destroy(Word $word){
 
         $word->delete();
     }

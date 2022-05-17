@@ -16,10 +16,11 @@ use Illuminate\Http\Response;
 class WordController extends Controller
 {
 
-    private $wordRepository;
+    private $repo;
 
-    public function __construct(WordRepositoryInterface $wordRepository) {
-        $this->wordRepository = $wordRepository;
+    public function __construct(WordRepositoryInterface $repo) {
+        $this->repo = $repo;
+        // $this->authorizeResource(Word::class, 'word');
     }
 
     /**
@@ -39,7 +40,7 @@ class WordController extends Controller
      */
     public function index(Request $request)
     {
-        $words = $this->wordRepository->all();
+        $words = $this->repo->all();
     
         return WordResource::collection($words); 
     }
@@ -64,7 +65,7 @@ class WordController extends Controller
      */
     public function store(WordPostRequest $request)
     {
-        $word = $this->wordRepository->create($request->validated());
+        $word = $this->repo->create($request->validated());
    
         return (new WordResource($word))
             ->response()
@@ -130,9 +131,10 @@ class WordController extends Controller
      *       )
      * )
      */
-    public function update(WordPostRequest $request, $id)
+    public function update(WordPostRequest $request, Word $word)
     {
-        $word = $this->wordRepository->update($id, $request->validated());
+        $this->authorize('update', $word);
+        $word = $this->repo->update($word, $request->validated());
    
         return (new WordResource($word))
             ->response()
@@ -164,7 +166,7 @@ class WordController extends Controller
      */
     public function destroy(Word $word)
     {
-        $word->delete();
+        $word = $this->repo->destroy($word);
 
         return response(null, Response::HTTP_NO_CONTENT);
     }
