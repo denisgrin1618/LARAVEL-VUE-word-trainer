@@ -64,8 +64,8 @@ ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/do
 # Install composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-ADD supervisord.conf /etc/supervisor/
-ADD /scripts/*.sh /usr/local/bin/
+ADD /supervisor/supervisord.conf /etc/supervisor/
+ADD /supervisor/*.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/*.sh 
 
 # Expose port 9000 and start php-fpm server (for FastCGI Process Manager)
