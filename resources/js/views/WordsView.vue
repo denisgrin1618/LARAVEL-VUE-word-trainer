@@ -1,7 +1,7 @@
 <template>
 <v-container>
 
-    <v-data-table :headers="headers" :items="words" :languages="languages" sort-by="calories" class="elevation-1" :items-per-page="8" :search="search" :custom-filter="filterText">
+    <v-data-table :headers="headers" :items="translations" :languages="languages" sort-by="calories" class="elevation-1" :items-per-page="8" :search="search" :custom-filter="filterText">
         <template v-slot:top>
             <v-toolbar flat>
                 <v-text-field v-model="search" label="Search" class="mt-4"></v-text-field>
@@ -80,6 +80,10 @@
 </template>
 
 <script>
+import { mapActions, mapWritableState } from 'pinia'
+import { useTranslationStore } from "../store/translations";
+import { useLanguageStore } from "../store/languages";
+
 export default {
 
     data: () => ({
@@ -110,7 +114,6 @@ export default {
                 sortable: false
             },
         ],
-        words: [],
         editedIndex: -1,
         editedItem: {
             id: 0,
@@ -149,11 +152,12 @@ export default {
                     name: ""
                 }
             }
-        },
-        languages: []
+        }
     }),
 
     computed: {
+        ...mapWritableState(useTranslationStore, ['translations']),
+        ...mapWritableState(useLanguageStore, ['languages']),
         formTitle() {
             return this.editedIndex === -1 ? 'New Item' : 'Edit Item'
         },
@@ -174,115 +178,34 @@ export default {
 
     methods: {
 
+        ...mapActions(useTranslationStore, ['getTranslations', 'saveTranslation']),
+        ...mapActions(useLanguageStore, ['getLanguages']),
+
         deleteTranslation(item) {
             axios.delete('/api/v1/translations/' + item.id)
         },
 
-        saveTranslation(item) {
-            let requestOne = axios({
-                method: item.word_origin.id > 0 ? 'put' : 'post',
-                url: '/api/v1/words' + (item.word_origin.id > 0 ? '/' + item.word_origin.id : ''),
-                data: {
-                    name: item.word_origin.name,
-                    language_id: item.word_origin.language.id,
-                }
-            })
-
-            let requestTwo = axios({
-                method: item.word_translation.id > 0 ? 'put' : 'post',
-                url: '/api/v1/words' + (item.word_translation.id > 0 ? '/' + item.word_translation.id : ''),
-                data: {
-                    name: item.word_translation.name,
-                    language_id: item.word_translation.language.id,
-                }
-            })
-
-            axios.all([requestOne, requestTwo])
-                .then(axios.spread((...responses) => {
-                    item.word_origin = responses[0].data.data
-                    item.word_translation = responses[1].data.data
-
-                    if (this.editedIndex > -1) {
-                        Object.assign(this.words[this.editedIndex], item)
-                    } else if (item.id == 0) {
-                        axios.post(`/api/v1/translations`, {
-                                word_origin_id: item.word_origin.id,
-                                word_translation_id: item.word_translation.id,
-                            })
-                            .then(response => {
-                                item = response.data.data
-                                this.words.push(item)
-                            })
-                    }
-
-                })).catch(errors => {
-                    console.log(errors);
-                })
-        },
-
-        saveWords(item) {
-            // axios({
-            //         method: item.word_origin.id > 0 ? 'put' : 'post',
-            //         url: '/api/v1/words' + (item.word_origin.id > 0 ? '/'+item.word_origin.id : ''),
-            //         data: {
-            //             name: item.word_origin.name,
-            //             language_id: item.word_origin.language.id,
-            //         }
-            //     })
-            //     .then(function (response) {
-            //         item.word_origin = response.data.data;
-            //     });
-
-            // axios({
-            //         method: item.word_translation.id > 0 ? 'put' : 'post',
-            //         url: '/api/v1/words' + (item.word_translation.id > 0 ? '/'+item.word_translation.id : ''),
-            //         data: {
-            //             name: item.word_translation.name,
-            //             language_id: item.word_translation.language.id,
-            //         }
-            //     })
-            //     .then(function (response) {
-            //         item.word_translation = response.data.data;
-            //     });
-
-        },
-
         initialize() {
-
-            axios.get('/api/v1/translations')
-                .then((response) => {
-                    this.words = response.data.data
-                })
-                .catch(function (error) {
-                    console.log(error);
-                });
-
-            axios.get('/api/v1/languages')
-                .then((response) => {
-                    this.languages = response.data.data
-                })
-                .catch(function (error) {
-                    console.log(error);
-                });
-
+            this.getTranslations()
+            this.getLanguages()
         },
 
         editItem(item) {
-            this.editedIndex = this.words.indexOf(item)
+            this.editedIndex = this.translations.indexOf(item)
             this.editedItem = Object.assign({}, item)
             this.dialog = true
             console.log(item);
         },
 
         deleteItem(item) {
-            this.editedIndex = this.words.indexOf(item)
+            this.editedIndex = this.translations.indexOf(item)
             this.editedItem = Object.assign({}, item)
             this.dialogDelete = true
         },
 
         deleteItemConfirm() {
             this.deleteTranslation(this.editedItem)
-            this.words.splice(this.editedIndex, 1)
+            this.translations.splice(this.editedIndex, 1)
             this.closeDelete()
         },
 
@@ -304,11 +227,11 @@ export default {
 
         save() {
             // if (this.editedIndex > -1) {
-            //     Object.assign(this.words[this.editedIndex], this.editedItem)
+            //     Object.assign(this.translations[this.editedIndex], this.editedItem)
             // } else {
-            //     this.words.push(this.editedItem)
+            //     this.translations.push(this.editedItem)
             // }
-            this.saveTranslation(this.editedItem)
+            this.saveTranslation(this.editedItem, this.editedIndex)
             this.close()
         },
 
