@@ -11,7 +11,7 @@ export PATH="$HOME/.config/composer/vendor/bin:$PATH"
 ```
 
 -   Clone the repository with **git clone**
--   Copy **.env.dev** file to **.env** and edit database credentials there
+-   Copy **.env.dev** file to **.env**
 -   Copy **./docker/docker-compose-sail.yml** file to **docker-compose.yml**
 -   Run `sail up --build -d`
 -   Run `sail composer install`
@@ -23,8 +23,8 @@ export PATH="$HOME/.config/composer/vendor/bin:$PATH"
 ## Laravel docker
 
 -   Clone the repository with **git clone**
--   Copy **.env.dev** file to **.env** and edit database credentials there
--   Copy **./dockerdocker-compose-docker.yml** file to **docker-compose.yml**
+-   Copy **.env.dev** file to **.env**
+-   Copy **./docker/docker-compose-docker.yml** file to **docker-compose.yml**
 -   Run `docker-compose up --build -d`
 -   Run `docker-compose exec app composer install`
 -   Run `docker-compose exec app php artisan key:generate`
