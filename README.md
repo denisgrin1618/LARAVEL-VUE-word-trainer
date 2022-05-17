@@ -1,7 +1,5 @@
 ![Word trainer](/public/images/logo.png)
 
-# How to use
-
 ## Laravel sail
 
 -   Prepare environment
@@ -22,7 +20,7 @@ export PATH="$HOME/.config/composer/vendor/bin:$PATH"
 -   Run `sail artisan l5-swagger:generate` (Regenerate documentation)
 -   Run `sail npm i && sail npm run watch` (Regenerate front)
 
-## Docker
+## Laravel docker
 
 -   Clone the repository with **git clone**
 -   Copy **.env.dev** file to **.env** and edit database credentials there
@@ -35,7 +33,7 @@ export PATH="$HOME/.config/composer/vendor/bin:$PATH"
 -   Run `docker-compose exec npm i`
 -   Run `docker-compose exec npm run watch` (Regenerate front)
 
-# Dev Links
+## Dev Links
 
 -   http://localhost [Front]
 
