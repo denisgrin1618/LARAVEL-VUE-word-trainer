@@ -112,12 +112,8 @@
 
 <script>
 import Alert from './components/Alert.vue'
-import {
-    mapWritableState
-} from 'pinia'
-import {
-    useUserStore
-} from "./store/user";
+import { mapWritableState } from 'pinia'
+import { useUserStore } from "./store/user";
 
 export default {
     name: 'App',

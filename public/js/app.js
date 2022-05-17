@@ -2760,6 +2760,15 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
+/* harmony import */ var pinia__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! pinia */ "./node_modules/pinia/dist/pinia.esm-browser.js");
+/* harmony import */ var _store_translations__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../store/translations */ "./resources/js/store/translations.js");
+/* harmony import */ var _store_languages__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../store/languages */ "./resources/js/store/languages.js");
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { _defineProperty(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 //
 //
 //
@@ -2841,6 +2850,9 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+
+
+
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
     return {
@@ -2866,7 +2878,6 @@ __webpack_require__.r(__webpack_exports__);
         value: 'actions',
         sortable: false
       }],
-      words: [],
       editedIndex: -1,
       editedItem: {
         id: 0,
@@ -2905,15 +2916,14 @@ __webpack_require__.r(__webpack_exports__);
             name: ""
           }
         }
-      },
-      languages: []
+      }
     };
   },
-  computed: {
+  computed: _objectSpread(_objectSpread(_objectSpread({}, (0,pinia__WEBPACK_IMPORTED_MODULE_2__.mapWritableState)(_store_translations__WEBPACK_IMPORTED_MODULE_0__.useTranslationStore, ['translations'])), (0,pinia__WEBPACK_IMPORTED_MODULE_2__.mapWritableState)(_store_languages__WEBPACK_IMPORTED_MODULE_1__.useLanguageStore, ['languages'])), {}, {
     formTitle: function formTitle() {
       return this.editedIndex === -1 ? 'New Item' : 'Edit Item';
     }
-  },
+  }),
   watch: {
     dialog: function dialog(val) {
       val || this.close();
@@ -2925,137 +2935,61 @@ __webpack_require__.r(__webpack_exports__);
   created: function created() {
     this.initialize();
   },
-  methods: {
+  methods: _objectSpread(_objectSpread(_objectSpread({}, (0,pinia__WEBPACK_IMPORTED_MODULE_2__.mapActions)(_store_translations__WEBPACK_IMPORTED_MODULE_0__.useTranslationStore, ['getTranslations', 'saveTranslation'])), (0,pinia__WEBPACK_IMPORTED_MODULE_2__.mapActions)(_store_languages__WEBPACK_IMPORTED_MODULE_1__.useLanguageStore, ['getLanguages'])), {}, {
     deleteTranslation: function deleteTranslation(item) {
       axios["delete"]('/api/v1/translations/' + item.id);
     },
-    saveTranslation: function saveTranslation(item) {
-      var _this = this;
-
-      var requestOne = axios({
-        method: item.word_origin.id > 0 ? 'put' : 'post',
-        url: '/api/v1/words' + (item.word_origin.id > 0 ? '/' + item.word_origin.id : ''),
-        data: {
-          name: item.word_origin.name,
-          language_id: item.word_origin.language.id
-        }
-      });
-      var requestTwo = axios({
-        method: item.word_translation.id > 0 ? 'put' : 'post',
-        url: '/api/v1/words' + (item.word_translation.id > 0 ? '/' + item.word_translation.id : ''),
-        data: {
-          name: item.word_translation.name,
-          language_id: item.word_translation.language.id
-        }
-      });
-      axios.all([requestOne, requestTwo]).then(axios.spread(function () {
-        for (var _len = arguments.length, responses = new Array(_len), _key = 0; _key < _len; _key++) {
-          responses[_key] = arguments[_key];
-        }
-
-        item.word_origin = responses[0].data.data;
-        item.word_translation = responses[1].data.data;
-
-        if (_this.editedIndex > -1) {
-          Object.assign(_this.words[_this.editedIndex], item);
-        } else if (item.id == 0) {
-          axios.post("/api/v1/translations", {
-            word_origin_id: item.word_origin.id,
-            word_translation_id: item.word_translation.id
-          }).then(function (response) {
-            item = response.data.data;
-
-            _this.words.push(item);
-          });
-        }
-      }))["catch"](function (errors) {
-        console.log(errors);
-      });
-    },
-    saveWords: function saveWords(item) {// axios({
-      //         method: item.word_origin.id > 0 ? 'put' : 'post',
-      //         url: '/api/v1/words' + (item.word_origin.id > 0 ? '/'+item.word_origin.id : ''),
-      //         data: {
-      //             name: item.word_origin.name,
-      //             language_id: item.word_origin.language.id,
-      //         }
-      //     })
-      //     .then(function (response) {
-      //         item.word_origin = response.data.data;
-      //     });
-      // axios({
-      //         method: item.word_translation.id > 0 ? 'put' : 'post',
-      //         url: '/api/v1/words' + (item.word_translation.id > 0 ? '/'+item.word_translation.id : ''),
-      //         data: {
-      //             name: item.word_translation.name,
-      //             language_id: item.word_translation.language.id,
-      //         }
-      //     })
-      //     .then(function (response) {
-      //         item.word_translation = response.data.data;
-      //     });
-    },
     initialize: function initialize() {
-      var _this2 = this;
-
-      axios.get('/api/v1/translations').then(function (response) {
-        _this2.words = response.data.data;
-      })["catch"](function (error) {
-        console.log(error);
-      });
-      axios.get('/api/v1/languages').then(function (response) {
-        _this2.languages = response.data.data;
-      })["catch"](function (error) {
-        console.log(error);
-      });
+      this.getTranslations();
+      this.getLanguages();
     },
     editItem: function editItem(item) {
-      this.editedIndex = this.words.indexOf(item);
+      this.editedIndex = this.translations.indexOf(item);
       this.editedItem = Object.assign({}, item);
       this.dialog = true;
       console.log(item);
     },
     deleteItem: function deleteItem(item) {
-      this.editedIndex = this.words.indexOf(item);
+      this.editedIndex = this.translations.indexOf(item);
       this.editedItem = Object.assign({}, item);
       this.dialogDelete = true;
     },
     deleteItemConfirm: function deleteItemConfirm() {
       this.deleteTranslation(this.editedItem);
-      this.words.splice(this.editedIndex, 1);
+      this.translations.splice(this.editedIndex, 1);
       this.closeDelete();
     },
     close: function close() {
-      var _this3 = this;
+      var _this = this;
 
       this.dialog = false;
       this.$nextTick(function () {
-        _this3.editedItem = Object.assign({}, _this3.defaultItem);
-        _this3.editedIndex = -1;
+        _this.editedItem = Object.assign({}, _this.defaultItem);
+        _this.editedIndex = -1;
       });
     },
     closeDelete: function closeDelete() {
-      var _this4 = this;
+      var _this2 = this;
 
       this.dialogDelete = false;
       this.$nextTick(function () {
-        _this4.editedItem = Object.assign({}, _this4.defaultItem);
-        _this4.editedIndex = -1;
+        _this2.editedItem = Object.assign({}, _this2.defaultItem);
+        _this2.editedIndex = -1;
       });
     },
     save: function save() {
       // if (this.editedIndex > -1) {
-      //     Object.assign(this.words[this.editedIndex], this.editedItem)
+      //     Object.assign(this.translations[this.editedIndex], this.editedItem)
       // } else {
-      //     this.words.push(this.editedItem)
+      //     this.translations.push(this.editedItem)
       // }
-      this.saveTranslation(this.editedItem);
+      this.saveTranslation(this.editedItem, this.editedIndex);
       this.close();
     },
     filterText: function filterText(value, search, item) {
       return value != null && search != null && typeof value === 'string' && value.toString().indexOf(search) !== -1;
     }
-  }
+  })
 });
 
 /***/ }),
@@ -3263,6 +3197,137 @@ router.beforeEach(function (to, from, next) {
   }
 });
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (router);
+
+/***/ }),
+
+/***/ "./resources/js/store/languages.js":
+/*!*****************************************!*\
+  !*** ./resources/js/store/languages.js ***!
+  \*****************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "useLanguageStore": () => (/* binding */ useLanguageStore)
+/* harmony export */ });
+/* harmony import */ var pinia__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! pinia */ "./node_modules/pinia/dist/pinia.esm-browser.js");
+/* harmony import */ var _user__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./user */ "./resources/js/store/user.js");
+
+
+var useLanguageStore = (0,pinia__WEBPACK_IMPORTED_MODULE_1__.defineStore)('LanguageStore', {
+  state: function state() {
+    return {
+      languages: []
+    };
+  },
+  actions: {
+    getLanguages: function getLanguages() {
+      var _this = this;
+
+      var auth = (0,_user__WEBPACK_IMPORTED_MODULE_0__.useUserStore)();
+
+      if (!auth.isAuthenticated) {
+        throw new Error('User must be authenticated');
+      }
+
+      if (this.languages.length == 0) {
+        axios.get('/api/v1/languages').then(function (response) {
+          _this.languages = response.data.data;
+        })["catch"](function (error) {
+          console.log(error);
+        });
+      }
+    }
+  }
+});
+
+/***/ }),
+
+/***/ "./resources/js/store/translations.js":
+/*!********************************************!*\
+  !*** ./resources/js/store/translations.js ***!
+  \********************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "useTranslationStore": () => (/* binding */ useTranslationStore)
+/* harmony export */ });
+/* harmony import */ var pinia__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! pinia */ "./node_modules/pinia/dist/pinia.esm-browser.js");
+/* harmony import */ var _user__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./user */ "./resources/js/store/user.js");
+
+
+var useTranslationStore = (0,pinia__WEBPACK_IMPORTED_MODULE_1__.defineStore)('TranslationStore', {
+  state: function state() {
+    return {
+      translations: []
+    };
+  },
+  actions: {
+    getTranslations: function getTranslations() {
+      var _this = this;
+
+      var auth = (0,_user__WEBPACK_IMPORTED_MODULE_0__.useUserStore)();
+
+      if (!auth.isAuthenticated) {
+        throw new Error('User must be authenticated');
+      }
+
+      if (this.translations.length == 0) {
+        axios.get('/api/v1/translations').then(function (response) {
+          _this.translations = response.data.data;
+        })["catch"](function (error) {
+          console.log(error);
+        });
+      }
+    },
+    saveTranslation: function saveTranslation(item, editedIndex) {
+      var _this2 = this;
+
+      var requestOne = axios({
+        method: item.word_origin.id > 0 ? 'put' : 'post',
+        url: '/api/v1/words' + (item.word_origin.id > 0 ? '/' + item.word_origin.id : ''),
+        data: {
+          name: item.word_origin.name,
+          language_id: item.word_origin.language.id
+        }
+      });
+      var requestTwo = axios({
+        method: item.word_translation.id > 0 ? 'put' : 'post',
+        url: '/api/v1/words' + (item.word_translation.id > 0 ? '/' + item.word_translation.id : ''),
+        data: {
+          name: item.word_translation.name,
+          language_id: item.word_translation.language.id
+        }
+      });
+      axios.all([requestOne, requestTwo]).then(axios.spread(function () {
+        for (var _len = arguments.length, responses = new Array(_len), _key = 0; _key < _len; _key++) {
+          responses[_key] = arguments[_key];
+        }
+
+        item.word_origin = responses[0].data.data;
+        item.word_translation = responses[1].data.data;
+
+        if (editedIndex > -1) {
+          Object.assign(_this2.translations[editedIndex], item);
+        } else if (item.id == 0) {
+          axios.post("/api/v1/translations", {
+            word_origin_id: item.word_origin.id,
+            word_translation_id: item.word_translation.id
+          }).then(function (response) {
+            item = response.data.data;
+
+            _this2.translations.push(item);
+          });
+        }
+      }))["catch"](function (errors) {
+        console.log(errors);
+      });
+    }
+  }
+});
 
 /***/ }),
 
@@ -25370,7 +25435,7 @@ var render = function () {
         staticClass: "elevation-1",
         attrs: {
           headers: _vm.headers,
-          items: _vm.words,
+          items: _vm.translations,
           languages: _vm.languages,
           "sort-by": "calories",
           "items-per-page": 8,
