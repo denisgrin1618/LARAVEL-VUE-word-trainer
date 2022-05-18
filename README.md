@@ -33,30 +33,17 @@ export PATH="$HOME/.config/composer/vendor/bin:$PATH"
 -   Run `docker-compose exec npm i`
 -   Run `docker-compose exec npm run watch` (Regenerate front)
 
-## Dev Links
-
--   http://localhost [Front]
+## Links
 
 ```properties
 login: test@mail.com
 password: password
 ```
 
--   http://localhost:8003 [Adminer]
-
-```properties
-server: mysql
-user: sail
-password: password
-```
-
+-   http://localhost [Front]
+-   http://localhost:8003 [DbAdminer]
 -   http://localhost/api/documentation [Doc]
-
-## AWS Beanstalk ssh
-
-```bash
-$ ssh -i ~/.ssh/word-trainer-bean-key.pem ec2-user@3.21.103.65
-```
+-   http://localhost/nova [AdminPanel]
 
 ## VS Code extentions
 
