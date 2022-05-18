@@ -16,16 +16,27 @@ class WordSeeder extends Seeder
      */
     public function run()
     {
-        $user = User::where('email', 'test@mail.com')->first();
+        // $user = User::where('email', 'test@mail.com')->first();
 
-        Word::factory()
-            ->count(100)
-            ->state(new Sequence(
-                ['language_id' => 1],
-                ['language_id' => 2],
-            ))
-            ->create([
-                'user_id' => $user->id
-            ]);
+        // Word::factory()
+        //     ->count(100)
+        //     ->state(new Sequence(
+        //         ['language_id' => 1],
+        //         ['language_id' => 2],
+        //     ))
+        //     ->create([
+        //         'user_id' => $user->id
+        //     ]);
+
+        foreach (User::all() as $user) {
+            Word::factory()
+                ->count(100)
+                ->for($user)
+                ->state(new Sequence(
+                    ['language_id' => 1],
+                    ['language_id' => 2],
+                ))
+                ->create();
+        }
     }
 }

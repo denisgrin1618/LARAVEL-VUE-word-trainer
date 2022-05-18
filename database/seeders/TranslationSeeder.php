@@ -17,13 +17,28 @@ class TranslationSeeder extends Seeder
      */
     public function run()
     {
-        $user = User::factory()
-        ->unverified()
-        ->create([
-            'email'=>'test@mail.com',
-            'password' => Hash::make('password')
-        ]);
+        foreach (User::all() as $user) {
 
-        Translation::factory()->count(50)->create(['user_id' => $user]);
+            $iterator1 = Word::where('user_id', $user->id)
+                ->where('language_id', 1)
+                ->get()
+                ->getIterator();
+
+            $iterator2 = Word::where('user_id', $user->id)
+                ->where('language_id', 2)
+                ->get()
+                ->getIterator();
+
+            while ($iterator1->valid() && $iterator2->valid()) {
+                Translation::factory()
+                    ->for($user)
+                    ->create([
+                        'word_origin_id' => $iterator1->current(),
+                        'word_translation_id' => $iterator2->current(),
+                    ]);
+                $iterator1->next();
+                $iterator2->next();
+            }
+        }
     }
 }
