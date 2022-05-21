@@ -16,3 +16,4 @@ yarn-error.log
 /.vscode
 /deploy/aws-administratoraaccess-keys.csv
 supervisord.pid
+/tmp

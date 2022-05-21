@@ -30,12 +30,8 @@
 </template>
 
 <script>
-import {
-    mapWritableState
-} from 'pinia'
-import {
-    useUserStore
-} from "../store/user";
+import { mapActions, mapWritableState } from 'pinia'
+import { useUserStore } from "../store/user";
 
 export default {
 
@@ -56,28 +52,11 @@ export default {
     },
 
     methods: {
-
-        formSubmit(e) {
-            e.preventDefault();
-            let that = this;
-
-            axios.post('/api/register', {
-                    name: this.name,
-                    email: this.email,
-                    password: this.password,
-                    password_confirmation: this.password_confirmation
-                })
-                .then(function (response) {
-                    that.user.token = response.data.data.token;
-                    that.user.name = response.data.data.name;
-                    that.isAuthenticated = true;
-                    that.$router.push('/');
-                })
-                .catch(function (error) {
-                    console.log(error);
-                });
-        }
-
+      ...mapActions(useUserStore, ['signUp']),
+      formSubmit(e) {
+        e.preventDefault();
+        this.signUp(this.name, this.email, this.password, this.password_confirmation)
+      }
     }
 
 }

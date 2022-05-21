@@ -32,6 +32,16 @@ RUN docker-php-ext-install pdo_mysql mbstring zip exif pcntl gd
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg
 RUN docker-php-ext-install gd
 
+# RUN curl 'http://pecl.php.net/get/redis-8.1.6.tgz' -o redis-8.1.6.tgz \
+#     && pecl install redis-8.1.6.tgz \
+#     &&  rm -rf redis-8.1.6.tgz \
+#     &&  rm -rf /tmp/pear \
+#     &&  docker-php-ext-enable redis 
+RUN pecl install -o -f redis \
+    &&  rm -rf /tmp/pear \
+    &&  docker-php-ext-enable redis
+
+
 # Install composer (php package manager)
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 

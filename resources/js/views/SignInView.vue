@@ -24,12 +24,8 @@
 </template>
 
 <script>
-import {
-    mapWritableState
-} from 'pinia'
-import {
-    useUserStore
-} from "../store/user";
+import { mapActions, mapWritableState } from 'pinia'
+import { useUserStore } from "../store/user";
 
 export default {
 
@@ -45,28 +41,11 @@ export default {
     },
 
     methods: {
-
+      ...mapActions(useUserStore, ['signIn']),
         formSubmit(e) {
-            e.preventDefault();
-
-            axios.post('/api/login', {
-                    email: this.email,
-                    password: this.password
-                })
-                .then((response) => {
-                    this.user.token = response.data.data.token;
-                    this.user.name = response.data.data.name;
-                    this.isAuthenticated = true;
-                    this.$cookies.set('apitoken', this.user.token)
-                    this.$cookies.set('username', this.user.name)
-                    axios.defaults.headers.common['Authorization'] = `Bearer ${this.user.token}`;
-                    this.$router.push('/')
-                })
-                .catch(function (error) {
-                    console.log(error);
-                });
+          e.preventDefault();
+          this.signIn(this.email, this.password)
         }
-
     }
 
 }

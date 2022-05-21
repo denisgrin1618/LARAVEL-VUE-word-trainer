@@ -16,24 +16,26 @@ class RegisterController extends Controller
         $input = $request->all();
         $input['password'] = bcrypt($input['password']);
         $user = User::create($input);
-       
+
         $data['token'] = $user->createToken('MyApp')->plainTextToken;
         $data['name'] = $user->name;
-   
+        $data['id'] = $user->id;
+
         return response()->json([
             'data' => $data
         ]);
     }
-   
+
     public function login(LoginRequest $request)
     {
-        if(!Auth::attempt(['email' => $request->email, 'password' => $request->password])){            
-            return response()->json(['errors'=>'Unauthorised']);
-        } 
+        if (!Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
+            return response()->json(['errors' => 'Unauthorised']);
+        }
 
-        $user = Auth::user(); 
-        $data['token'] = $user->createToken('MyApp')->plainTextToken; 
+        $user = Auth::user();
+        $data['token'] = $user->createToken('MyApp')->plainTextToken;
         $data['name'] = $user->name;
+        $data['id'] = $user->id;
 
         return response()->json([
             'data' => $data

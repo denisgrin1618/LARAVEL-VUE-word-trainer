@@ -7,12 +7,15 @@ services:
         image: laravel/app
         restart: unless-stopped
         tty: true
+        ports:
+            - "6001:6001"
         environment:
             SERVICE_NAME: app
             SERVICE_TAGS: dev
         working_dir: /var/www/html
         volumes:
             - ./:/var/www/html
+            - ./tmp:/tmp
         networks:
             - wordback
     nginx:
@@ -57,6 +60,17 @@ services:
             retries: 3
             timeout: 5s
 
+    redis:
+        image: redis:5.0-alpine
+        restart: unless-stopped
+        tty: true
+        ports:
+            - "6379:6379"
+        volumes:
+            - 'wordback-redis:/data'
+        networks:
+            - wordback
+        
     adminer:
         image: 'adminer:latest'
         ports:
@@ -96,4 +110,6 @@ networks:
         driver: bridge
 volumes:
     wordback-mysql:
+        driver: local
+    wordback-redis:
         driver: local

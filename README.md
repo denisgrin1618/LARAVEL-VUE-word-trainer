@@ -26,12 +26,12 @@ export PATH="$HOME/.config/composer/vendor/bin:$PATH"
 -   Copy **.env.dev** file to **.env**
 -   Copy **./docker/docker-compose-docker.yml** file to **docker-compose.yml**
 -   Run `docker-compose up --build -d`
--   Run `docker-compose exec app composer install`
--   Run `docker-compose exec app php artisan key:generate`
--   Run `docker-compose exec app php artisan migrate --seed`
--   Run `docker-compose exec app php artisan l5-swagger:generate` (Regenerate documentation)
--   Run `docker-compose exec npm i`
--   Run `docker-compose exec npm run watch` (Regenerate front)
+-   Run `docker-compose exec --user $(id -u):$(id -g) app composer install`
+-   Run `docker-compose exec --user $(id -u):$(id -g) app php artisan key:generate`
+-   Run `docker-compose exec --user $(id -u):$(id -g) app php artisan migrate --seed`
+-   Run `docker-compose exec --user $(id -u):$(id -g) app php artisan l5-swagger:generate` (Regenerate documentation)
+-   Run `docker-compose run --rm npm i`
+-   Run `docker-compose run --rm npm run watch` (Regenerate front)
 
 ## Links
 

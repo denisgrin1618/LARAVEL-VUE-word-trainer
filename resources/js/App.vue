@@ -112,7 +112,7 @@
 
 <script>
 import Alert from './components/Alert.vue'
-import { mapWritableState } from 'pinia'
+import { mapActions, mapWritableState } from 'pinia'
 import { useUserStore } from "./store/user";
 
 export default {
@@ -127,6 +127,26 @@ export default {
             mobile: false
         }
     },
+    watch: {
+      isAuthenticated(auth) {
+        if (auth) {
+          this.$cookies.set('apitoken', this.user.token)
+          this.$cookies.set('username', this.user.name)
+          this.$cookies.set('userid', this.user.id)
+          axios.defaults.headers.common['Authorization'] = `Bearer ${this.user.token}`
+
+          Echo.private('user.' + this.user.id)
+            .listen('MessageCreated', (e) => {
+                console.log(e);
+            });
+
+          this.$router.push('/');
+        } else {
+          axios.defaults.headers.common['Authorization'] = null;
+          this.$router.push('/signin');
+        }
+      }
+    },
     computed: {
         ...mapWritableState(useUserStore, ['user', 'isAuthenticated']),
         theme() {
@@ -134,23 +154,17 @@ export default {
         }
     },
     methods: {
+        ...mapActions(useUserStore, ['logout']),
         readCookie() {
             if (this.$cookies.isKey('apitoken')) {
                 this.isAuthenticated = true
                 this.user.name = this.$cookies.get('username')
                 this.user.token = this.$cookies.get('apitoken')
-                this.$router.push('/');
+                this.user.id = this.$cookies.get('userid')
             }
         },
         detectScreenChange() {
             this.mobile = window.innerWidth < 560;
-        },
-        logout() {
-            this.isAuthenticated = false;
-            this.user.name = '';
-            this.user.token = '';
-            axios.defaults.headers.common['Authorization'] = null;
-            this.$router.push('/signin');
         }
     },
     mounted() {

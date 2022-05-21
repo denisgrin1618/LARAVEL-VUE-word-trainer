@@ -2,8 +2,10 @@
 
 namespace App\Providers;
 
+use App\Models\Message;
 use App\Models\Translation;
 use App\Models\Word;
+use App\Observers\MessageObserver;
 use App\Observers\TranslationObserver;
 use App\Observers\WordObserver;
 use Illuminate\Auth\Events\Registered;
@@ -33,5 +35,6 @@ class EventServiceProvider extends ServiceProvider
     {
         Word::observe(WordObserver::class);
         Translation::observe(TranslationObserver::class);
+        Message::observe(MessageObserver::class);
     }
 }
