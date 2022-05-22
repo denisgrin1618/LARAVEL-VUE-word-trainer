@@ -138,7 +138,7 @@ export default {
 
           Echo.private('user.' + this.user.id)
             .listen('MessageCreated', (e) => {
-                console.log(e);
+                // console.log(e);
                 this.message = e.message.message
             });
 

@@ -63,6 +63,7 @@ class User extends Resource
                 ->updateRules('nullable', 'string', 'min:8'),
 
             HasMany::make('Words'),
+            HasMany::make('Messages'),
         ];
     }
 

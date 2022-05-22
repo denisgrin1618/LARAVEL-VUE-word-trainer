@@ -2469,7 +2469,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         this.$cookies.set('userid', this.user.id);
         axios.defaults.headers.common['Authorization'] = "Bearer ".concat(this.user.token);
         Echo["private"]('user.' + this.user.id).listen('MessageCreated', function (e) {
-          console.log(e);
+          // console.log(e);
           _this.message = e.message.message;
         });
         this.$router.push('/');
