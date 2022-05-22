@@ -41,6 +41,7 @@ services:
             - wordback
     mysql:
         image: 'mysql/mysql-server:8.0'
+        restart: unless-stopped
         ports:
             - '${FORWARD_DB_PORT:-8001}:3306'
         environment:
@@ -73,6 +74,7 @@ services:
         
     adminer:
         image: 'adminer:latest'
+        restart: unless-stopped
         ports:
             - 8003:8080
         environment:

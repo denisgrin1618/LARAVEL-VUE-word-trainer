@@ -22,14 +22,21 @@ export PATH="$HOME/.config/composer/vendor/bin:$PATH"
 
 ## Laravel docker
 
+-   Prepare environment
+    In file ~/.bashrc add strings:
+
+```
+alias laradoc="docker-compose exec --user $(id -u):$(id -g)"
+```
+
 -   Clone the repository with **git clone**
 -   Copy **.env.dev** file to **.env**
 -   Copy **./docker/docker-compose-docker.yml** file to **docker-compose.yml**
 -   Run `docker-compose up --build -d`
--   Run `docker-compose exec --user $(id -u):$(id -g) app composer install`
--   Run `docker-compose exec --user $(id -u):$(id -g) app php artisan key:generate`
--   Run `docker-compose exec --user $(id -u):$(id -g) app php artisan migrate --seed`
--   Run `docker-compose exec --user $(id -u):$(id -g) app php artisan l5-swagger:generate` (Regenerate documentation)
+-   Run `laradoc app composer install`
+-   Run `laradoc app php artisan key:generate`
+-   Run `laradoc app php artisan migrate --seed`
+-   Run `laradoc app php artisan l5-swagger:generate` (Regenerate documentation)
 -   Run `docker-compose run --rm npm i`
 -   Run `docker-compose run --rm npm run watch` (Regenerate front)
 

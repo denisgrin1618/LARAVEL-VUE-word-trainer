@@ -27,7 +27,7 @@ import { mapState } from 'pinia'
 import { useUserStore } from "../store/user";
 
 export default {
-  name: 'HomeView',
+  name: 'HomePage',
 
   computed: {
       ...mapState(useUserStore, ['user'])

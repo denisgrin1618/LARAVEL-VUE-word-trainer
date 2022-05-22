@@ -1,11 +1,11 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import HomeView from '../views/HomeView.vue'
-import SignInView from '../views/SignInView.vue'
-import SignUpView from '../views/SignUpView.vue'
-import WordsView from '../views/WordsView.vue'
-import StatisticsView from '../views/StatisticsView.vue'
-import QuizView from '../views/QuizView.vue'
+import HomePage from '../pages/HomePage.vue'
+import SignInPage from '../pages/SignInPage.vue'
+import SignUpPage from '../pages/SignUpPage.vue'
+import WordsPage from '../pages/WordsPage.vue'
+import StatisticsPage from '../pages/StatisticsPage.vue'
+import QuizPage from '../pages/QuizPage.vue'
 import { useUserStore } from "../store/user";
 
 Vue.use(VueRouter)
@@ -14,32 +14,32 @@ const routes = [
   {
     path: '/',
     name: 'home',
-    component: HomeView
+    component: HomePage
   },
   {
     path: '/signin',
     name: 'signin',
-    component: SignInView
+    component: SignInPage
   },
   {
     path: '/signup',
     name: 'signup',
-    component: SignUpView
+    component: SignUpPage
   },
   {
     path: '/words',
     name: 'words',
-    component: WordsView
+    component: WordsPage
   },
   {
     path: '/statistics',
     name: 'statistics',
-    component: StatisticsView
+    component: StatisticsPage
   },
   {
     path: '/quiz',
     name: 'quiz',
-    component: QuizView
+    component: QuizPage
   }
 ]
 

@@ -114,6 +114,7 @@
 import Alert from './components/Alert.vue'
 import { mapActions, mapWritableState } from 'pinia'
 import { useUserStore } from "./store/user";
+import { useMessagesStore } from "./store/messages";
 
 export default {
     name: 'App',
@@ -138,6 +139,7 @@ export default {
           Echo.private('user.' + this.user.id)
             .listen('MessageCreated', (e) => {
                 console.log(e);
+                this.message = e.message.message
             });
 
           this.$router.push('/');
@@ -149,6 +151,7 @@ export default {
     },
     computed: {
         ...mapWritableState(useUserStore, ['user', 'isAuthenticated']),
+        ...mapWritableState(useMessagesStore, ['message']),
         theme() {
             return (this.$vuetify.theme.dark) ? 'dark' : 'light'
         }
