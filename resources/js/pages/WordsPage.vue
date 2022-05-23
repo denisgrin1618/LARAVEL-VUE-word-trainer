@@ -1,7 +1,7 @@
 <template>
 <v-container>
 
-    <v-data-table :headers="headers" :items="translations" :languages="languages" sort-by="calories" class="elevation-1" :items-per-page="8" :search="search" :custom-filter="filterText">
+    <v-data-table :headers="headers" :items="translations" :languages="languages" sort-by="calories" class="elevation-1" :items-per-page="5" :search="search" :custom-filter="filterText">
         <template v-slot:top>
             <v-toolbar flat>
                 <v-text-field v-model="search" label="Search" class="mt-4"></v-text-field>

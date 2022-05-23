@@ -103,15 +103,23 @@
         </v-list>
     </v-navigation-drawer>
 
+    <MessagePopup />
     <v-main>
         <!-- <Alert message="sdfsdf" type="error"></Alert> -->
         <router-view />
+
     </v-main>
+    <v-footer padless>
+        <v-col class="text-center" cols="12">
+            <strong>Word trainer - 2022</strong>
+        </v-col>
+    </v-footer>
 </v-app>
 </template>
 
 <script>
 import Alert from './components/Alert.vue'
+import MessagePopup from './components/MessagePopup.vue'
 import { mapActions, mapWritableState } from 'pinia'
 import { useUserStore } from "./store/user";
 import { useMessagesStore } from "./store/messages";
@@ -120,8 +128,10 @@ export default {
     name: 'App',
 
     components: {
-        Alert
+        Alert, 
+        MessagePopup
     },
+
     data() {
         return {
             drawer: false,
@@ -129,25 +139,25 @@ export default {
         }
     },
     watch: {
-      isAuthenticated(auth) {
-        if (auth) {
-          this.$cookies.set('apitoken', this.user.token)
-          this.$cookies.set('username', this.user.name)
-          this.$cookies.set('userid', this.user.id)
-          axios.defaults.headers.common['Authorization'] = `Bearer ${this.user.token}`
+        isAuthenticated(auth) {
+            if (auth) {
+                this.$cookies.set('apitoken', this.user.token)
+                this.$cookies.set('username', this.user.name)
+                this.$cookies.set('userid', this.user.id)
+                axios.defaults.headers.common['Authorization'] = `Bearer ${this.user.token}`
 
-          Echo.private('user.' + this.user.id)
-            .listen('MessageCreated', (e) => {
-                // console.log(e);
-                this.message = e.message.message
-            });
+                Echo.private('user.' + this.user.id)
+                    .listen('MessageCreated', (e) => {
+                        console.log(e);
+                        this.message = e.message.message
+                    });
 
-          this.$router.push('/');
-        } else {
-          axios.defaults.headers.common['Authorization'] = null;
-          this.$router.push('/signin');
+                this.$router.push('/');
+            } else {
+                axios.defaults.headers.common['Authorization'] = null;
+                this.$router.push('/signin');
+            }
         }
-      }
     },
     computed: {
         ...mapWritableState(useUserStore, ['user', 'isAuthenticated']),
